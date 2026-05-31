@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ExpenseCategory;
+use App\Models\Scopes\TenantScope;
 use Illuminate\Database\Seeder;
 
 class ExpenseCategorySeeder extends Seeder
@@ -22,17 +23,24 @@ class ExpenseCategorySeeder extends Seeder
             ['name' => 'مصروفات أخرى', 'description' => null, 'status' => 'active'],
         ];
 
-        foreach ($defaults as $row) {
-            ExpenseCategory::query()->firstOrCreate(
-                [
-                    'name' => $row['name'],
-                    'clinic_id' => $clinicId,
-                ],
-                [
-                    'description' => $row['description'],
-                    'status' => $row['status'],
-                ]
-            );
+        $scopeWasEnabled = TenantScope::$enabled;
+        TenantScope::$enabled = false;
+
+        try {
+            foreach ($defaults as $row) {
+                ExpenseCategory::query()->updateOrCreate(
+                    [
+                        'name' => $row['name'],
+                        'clinic_id' => $clinicId,
+                    ],
+                    [
+                        'description' => $row['description'],
+                        'status' => $row['status'],
+                    ]
+                );
+            }
+        } finally {
+            TenantScope::$enabled = $scopeWasEnabled;
         }
     }
 }
