@@ -18,20 +18,12 @@ FROM base AS vendor
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
-# --- Frontend build ---
-FROM node:22-bookworm-slim AS assets
-WORKDIR /build
-COPY package.json package-lock.json ./
-RUN npm ci
-COPY vite.config.js postcss.config.js tailwind.config.js ./
-COPY resources ./resources
-RUN npm run build
-
-# --- Application ---
+# --- Application (uses pre-built public/build from git — no npm in Docker) ---
 FROM base AS app
 COPY . .
 COPY --from=vendor /var/www/html/vendor ./vendor
-COPY --from=assets /build/public/build ./public/build
+
+RUN test -f public/build/manifest.json || (echo "ERROR: public/build missing — run npm run build locally and commit" && exit 1)
 
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R ug+rwx storage bootstrap/cache
