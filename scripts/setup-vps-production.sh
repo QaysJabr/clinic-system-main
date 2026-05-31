@@ -12,6 +12,33 @@ cd "${APP_DIR}"
 SERVER_IP="${SERVER_IP:-31.97.61.205}"
 APP_PORT="${APP_PORT:-80}"
 
+port_in_use() {
+  ss -tln 2>/dev/null | grep -q ":${1} " || netstat -tln 2>/dev/null | grep -q ":${1} "
+}
+
+resolve_app_port() {
+  if [[ "${APP_PORT}" != "80" ]]; then
+    return
+  fi
+  if ! port_in_use 80; then
+    return
+  fi
+  echo "    Port 80 is in use — stopping host nginx/apache..."
+  systemctl stop nginx 2>/dev/null || true
+  systemctl stop apache2 2>/dev/null || true
+  sleep 1
+  if ! port_in_use 80; then
+    echo "    Port 80 is free"
+    return
+  fi
+  APP_PORT=8080
+  echo "    Port 80 still busy — using ${APP_PORT} instead"
+  if [[ -f .env ]]; then
+    sed -i "s|^APP_PORT=.*|APP_PORT=${APP_PORT}|" .env
+    sed -i "s|^APP_URL=.*|APP_URL=http://${SERVER_IP}:${APP_PORT}|" .env
+  fi
+}
+
 echo "==> Clinic System — production setup"
 echo "    Path: ${APP_DIR}"
 echo "    URL:  http://${SERVER_IP}:${APP_PORT}"
@@ -66,6 +93,8 @@ else
   echo "    WARNING: storage/app/firebase-credentials.json missing — Push disabled"
   echo "    See docs/FIREBASE-PUSH-AR.md before going live with notifications"
 fi
+
+resolve_app_port
 
 echo "==> Build frontend assets (required for nginx public volume)"
 if [[ -f public/build/manifest.json ]]; then
