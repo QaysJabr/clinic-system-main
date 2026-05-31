@@ -30,7 +30,6 @@
     },
     "android": {
       "package": "com.clinic.system",
-      "googleServicesFile": "./google-services.json",
       "edgeToEdgeEnabled": true,
       "versionCode": 1,
       "usesCleartextTraffic": true,
