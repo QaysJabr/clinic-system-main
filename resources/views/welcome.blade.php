@@ -21,6 +21,7 @@
         config('marketing.demo_video_url'),
     );
     $androidApkUrl = config('marketing.android_apk_url');
+    $androidApkVersion = config('marketing.android_apk_version', '1.0.1');
 
     $featureTones = ['appointments', 'patients', 'invoices', 'reports', 'settings', 'staff'];
     $featureIcons = [
@@ -153,15 +154,16 @@
                     <div class="mt-6 space-y-3">
                         <p class="inline-flex max-w-full items-start gap-2 rounded-xl border border-emerald-200/80 bg-emerald-50/90 px-4 py-2 text-xs font-semibold leading-relaxed text-emerald-900 dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-200 sm:items-center">
                             <span aria-hidden="true" class="shrink-0">📱</span>
-                            <span>{{ __('saas.landing_mobile_app_badge') }} — {{ __('saas.landing_mobile_app_note') }}</span>
+                            <span>{{ __('saas.landing_mobile_app_badge', ['version' => $androidApkVersion]) }} — {{ __('saas.landing_mobile_app_note') }}</span>
                         </p>
                         @if ($androidApkUrl)
                             <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-                                <a href="{{ $androidApkUrl }}" class="inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white no-underline shadow-sm transition hover:bg-emerald-700 sm:w-auto sm:py-2 sm:text-xs" rel="noopener">
-                                    {{ __('saas.landing_mobile_app_download') }}
+                                <a href="{{ $androidApkUrl }}" class="inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white no-underline shadow-sm transition hover:bg-emerald-700 sm:w-auto sm:py-2.5 sm:text-sm" rel="noopener">
+                                    {{ __('saas.landing_mobile_app_download') }} v{{ $androidApkVersion }}
                                 </a>
                                 <span class="text-center text-xs font-medium text-slate-500 dark:text-slate-400 sm:text-start">{{ __('saas.landing_mobile_app_ios_soon') }}</span>
                             </div>
+                            <p class="text-xs leading-relaxed text-amber-800 dark:text-amber-200/90">{{ __('saas.landing_mobile_app_update_hint') }}</p>
                         @else
                             <span class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ __('saas.landing_mobile_app_ios_soon') }}</span>
                         @endif
@@ -607,7 +609,7 @@
             <div class="pointer-events-auto mx-auto flex max-w-lg flex-col gap-2">
                 @if ($androidApkUrl)
                     <a href="{{ $androidApkUrl }}" class="w-full rounded-xl bg-emerald-600 py-3.5 text-center text-sm font-bold text-white no-underline shadow-sm transition hover:bg-emerald-700" rel="noopener">
-                        {{ __('saas.landing_mobile_app_download') }}
+                        {{ __('saas.landing_mobile_app_download') }} v{{ $androidApkVersion }}
                     </a>
                 @endif
                 <div class="flex gap-2">

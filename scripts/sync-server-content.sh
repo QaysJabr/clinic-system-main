@@ -8,6 +8,7 @@ echo "==> git pull"
 git pull origin main 2>/dev/null || git pull
 
 DEFAULT_APK_URL="https://expo.dev/artifacts/eas/oDShSAmKzS7hL3whoqCXLZ.apk"
+DEFAULT_APK_VERSION="1.0.1"
 if ! grep -q '^MOBILE_ANDROID_APK_URL=.\+' .env 2>/dev/null; then
   if grep -q '^MOBILE_ANDROID_APK_URL=' .env 2>/dev/null; then
     sed -i "s|^MOBILE_ANDROID_APK_URL=.*|MOBILE_ANDROID_APK_URL=${DEFAULT_APK_URL}|" .env
@@ -15,6 +16,14 @@ if ! grep -q '^MOBILE_ANDROID_APK_URL=.\+' .env 2>/dev/null; then
     echo "MOBILE_ANDROID_APK_URL=${DEFAULT_APK_URL}" >> .env
   fi
   echo "    Set MOBILE_ANDROID_APK_URL in .env"
+fi
+if ! grep -q '^MOBILE_ANDROID_APK_VERSION=.\+' .env 2>/dev/null; then
+  if grep -q '^MOBILE_ANDROID_APK_VERSION=' .env 2>/dev/null; then
+    sed -i "s|^MOBILE_ANDROID_APK_VERSION=.*|MOBILE_ANDROID_APK_VERSION=${DEFAULT_APK_VERSION}|" .env
+  else
+    echo "MOBILE_ANDROID_APK_VERSION=${DEFAULT_APK_VERSION}" >> .env
+  fi
+  echo "    Set MOBILE_ANDROID_APK_VERSION in .env"
 fi
 
 COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml"

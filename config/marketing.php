@@ -19,4 +19,7 @@ return [
     /** Public APK download link shown on the landing page (Expo build artifact URL). */
     'android_apk_url' => env('MOBILE_ANDROID_APK_URL') ?: 'https://expo.dev/artifacts/eas/oDShSAmKzS7hL3whoqCXLZ.apk',
 
+    /** Shown on download buttons, e.g. v1.0.1 */
+    'android_apk_version' => env('MOBILE_ANDROID_APK_VERSION', '1.0.1'),
+
 ];
