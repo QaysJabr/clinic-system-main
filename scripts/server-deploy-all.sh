@@ -9,12 +9,24 @@ cd "${APP_DIR}"
 echo "==> git pull"
 git pull origin main 2>/dev/null || git pull
 
-if [[ ! -f storage/app/firebase-credentials.json ]]; then
+CREDS="storage/app/firebase-credentials.json"
+if [[ ! -f "${CREDS}" ]]; then
+  ADMINSDK="$(find storage/app -maxdepth 1 -name '*firebase-adminsdk*.json' -type f 2>/dev/null | head -1)"
+  if [[ -n "${ADMINSDK}" ]]; then
+    cp "${ADMINSDK}" "${CREDS}"
+    echo "    Renamed $(basename "${ADMINSDK}") → firebase-credentials.json"
+  fi
+fi
+
+if [[ ! -f "${CREDS}" ]]; then
   echo ""
   echo "ERROR: storage/app/firebase-credentials.json missing on server."
-  echo "Upload from your PC (MobaXterm SFTP):"
+  echo "Upload from your PC (MobaXterm SFTP) — any name is OK if it contains 'firebase-adminsdk':"
   echo "  Local:  clinic-system-main/storage/app/firebase-credentials.json"
-  echo "  Remote: /var/www/clinic-system-main/storage/app/firebase-credentials.json"
+  echo "  Remote: /var/www/clinic-system-main/storage/app/"
+  echo ""
+  echo "Or rename on server:"
+  echo "  cp storage/app/clinic-system-*-firebase-adminsdk-*.json storage/app/firebase-credentials.json"
   echo ""
   exit 1
 fi
