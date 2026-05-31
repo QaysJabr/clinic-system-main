@@ -28,7 +28,7 @@ class ExpenseCategorySeeder extends Seeder
 
         try {
             foreach ($defaults as $row) {
-                ExpenseCategory::query()->updateOrCreate(
+                ExpenseCategory::withoutGlobalScopes()->updateOrCreate(
                     [
                         'name' => $row['name'],
                         'clinic_id' => $clinicId,

@@ -19,9 +19,17 @@ fi
 
 COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml"
 
+echo "==> Rebuild Docker (git pull updates host files; app code lives in the image)"
+${COMPOSE} up -d --build
+
+sleep 5
+
 echo "==> Seed subscription plans (matches local PlanSeeder)"
 ${COMPOSE} exec -T app php artisan db:seed --class=PlanSeeder --force
-${COMPOSE} exec -T app php artisan db:seed --class=ExpenseCategorySeeder --force
+
+echo "==> Seed expense categories (skip if already present)"
+${COMPOSE} exec -T app php artisan db:seed --class=ExpenseCategorySeeder --force \
+  || echo "    ExpenseCategorySeeder skipped — categories already exist (OK)"
 
 echo "==> Clear & rebuild Laravel caches"
 ${COMPOSE} exec -T app php artisan config:clear
