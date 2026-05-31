@@ -1,5 +1,16 @@
-@echo off
-REM Run on VPS via MobaXterm (paste after uploading firebase-credentials.json)
+# ═══════════════════════════════════════════════════════════
+#  MobaXterm — السيرفر 31.97.61.205
+# ═══════════════════════════════════════════════════════════
+
+# ── إذا طلع: Docker not installed ──
 cd /var/www/clinic-system-main
 git pull origin main
+bash scripts/install-docker-vps.sh
 bash scripts/server-deploy-all.sh
+
+# ── أو أمر واحد (بعد git pull) ──
+# bash scripts/server-deploy-all.sh
+# (يثبّت Docker تلقائياً إذا ناقص)
+
+# ── firebase-credentials.json ──
+# cp storage/app/clinic-system-*-firebase-adminsdk-*.json storage/app/firebase-credentials.json

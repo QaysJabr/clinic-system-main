@@ -9,6 +9,12 @@ cd "${APP_DIR}"
 echo "==> git pull"
 git pull origin main 2>/dev/null || git pull
 
+if ! command -v docker >/dev/null 2>&1; then
+  echo ""
+  echo "Docker not installed — installing now..."
+  bash scripts/install-docker-vps.sh
+fi
+
 CREDS="storage/app/firebase-credentials.json"
 if [[ ! -f "${CREDS}" ]]; then
   ADMINSDK="$(find storage/app -maxdepth 1 -name '*firebase-adminsdk*.json' -type f 2>/dev/null | head -1)"
