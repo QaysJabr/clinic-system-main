@@ -97,6 +97,11 @@ class RolePermissionSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        $adminUser->forceFill([
+            'password' => $adminPassword,
+            'clinic_id' => $adminUser->clinic_id ?? config('tenancy.default_clinic_id'),
+            'email_verified_at' => $adminUser->email_verified_at ?? now(),
+        ])->save();
         if ($adminUser->clinic_id === null) {
             $adminUser->forceFill(['clinic_id' => config('tenancy.default_clinic_id')])->save();
         }
