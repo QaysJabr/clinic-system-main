@@ -7,7 +7,7 @@ set -euo pipefail
 cd /var/www/clinic-system-main
 
 SERVER_IP="${SERVER_IP:-31.97.61.205}"
-APK_URL="${APK_URL:-https://expo.dev/artifacts/eas/hQ1eYZyCn7kbN12unXkDcN.apk}"
+APK_URL="${APK_URL:-https://expo.dev/artifacts/eas/wU8eaJvpgiZwDcBG9Si28e.apk}"
 APK_VERSION="${APK_VERSION:-1.0.2}"
 
 echo ""
