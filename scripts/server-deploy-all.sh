@@ -41,7 +41,8 @@ bash scripts/setup-vps-production.sh
 
 echo ""
 echo "==> Push verify"
-docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T app php artisan push:verify
+COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml"
+${COMPOSE} exec -T app php artisan push:verify || true
 
 echo ""
 echo "Backend live: http://31.97.61.205"

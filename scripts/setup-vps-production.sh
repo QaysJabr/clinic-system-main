@@ -68,11 +68,16 @@ else
 fi
 
 echo "==> Build frontend assets (required for nginx public volume)"
-if command -v npm >/dev/null 2>&1; then
-  npm ci
+if [[ -f public/build/manifest.json ]]; then
+  echo "    Using pre-built public/build from git (skip npm)"
+elif command -v npm >/dev/null 2>&1; then
+  export PUPPETEER_SKIP_DOWNLOAD=true
+  export PUPPETEER_SKIP_CHROME_DOWNLOAD=true
+  npm ci --ignore-scripts
   npm run build
 else
-  echo "ERROR: npm is required on the host for public/build. Install Node.js 20+."
+  echo "ERROR: public/build missing and npm not installed."
+  echo "Either commit public/build or install Node.js 20+."
   exit 1
 fi
 
@@ -82,18 +87,20 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 echo "==> Wait for postgres"
 sleep 8
 
+COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml"
+
 echo "==> Laravel bootstrap (inside app container)"
-docker compose exec -T app php artisan key:generate --force
-docker compose exec -T app php artisan storage:link --force || true
-docker compose exec -T app php artisan migrate --force
-docker compose exec -T app php artisan db:seed --class=RolePermissionSeeder --force
-docker compose exec -T app php artisan config:cache
-docker compose exec -T app php artisan route:cache
-docker compose exec -T app php artisan view:cache
+${COMPOSE} exec -T app php artisan key:generate --force
+${COMPOSE} exec -T app php artisan storage:link --force || true
+${COMPOSE} exec -T app php artisan migrate --force
+${COMPOSE} exec -T app php artisan db:seed --class=RolePermissionSeeder --force
+${COMPOSE} exec -T app php artisan config:cache
+${COMPOSE} exec -T app php artisan route:cache
+${COMPOSE} exec -T app php artisan view:cache
 
 if [[ -f storage/app/firebase-credentials.json ]]; then
   echo "==> Verify Firebase Push"
-  docker compose exec -T app php artisan push:verify || true
+  ${COMPOSE} exec -T app php artisan push:verify || true
 fi
 
 echo ""
