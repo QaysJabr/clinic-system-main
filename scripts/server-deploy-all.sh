@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Run on VPS after git pull (MobaXterm / SSH as root)
+# Usage: bash scripts/server-deploy-all.sh
+set -euo pipefail
+
+APP_DIR="/var/www/clinic-system-main"
+cd "${APP_DIR}"
+
+echo "==> git pull"
+git pull origin main 2>/dev/null || git pull
+
+if [[ ! -f storage/app/firebase-credentials.json ]]; then
+  echo ""
+  echo "ERROR: storage/app/firebase-credentials.json missing on server."
+  echo "Upload from your PC (MobaXterm SFTP):"
+  echo "  Local:  clinic-system-main/storage/app/firebase-credentials.json"
+  echo "  Remote: /var/www/clinic-system-main/storage/app/firebase-credentials.json"
+  echo ""
+  exit 1
+fi
+
+bash scripts/setup-vps-production.sh
+
+echo ""
+echo "==> Push verify"
+docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T app php artisan push:verify
+
+echo ""
+echo "Backend live: http://31.97.61.205"
+echo "API:          http://31.97.61.205/api/v1"

@@ -4,7 +4,7 @@
     "slug": "clinic-system-main",
     "owner": "jabrqays",
     "extra": {
-      "apiBaseUrl": "http://192.168.80.157:8000/api/v1",
+      "apiBaseUrl": "http://31.97.61.205/api/v1",
       "eas": {
         "projectId": "2c4c2c58-7518-4a22-831f-21b2f22d4ca4"
       }
@@ -30,6 +30,7 @@
     },
     "android": {
       "package": "com.clinic.system",
+      "googleServicesFile": "./google-services.json",
       "edgeToEdgeEnabled": true,
       "versionCode": 1,
       "usesCleartextTraffic": true,
