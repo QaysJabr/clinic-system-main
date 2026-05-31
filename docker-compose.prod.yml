@@ -10,18 +10,21 @@ services:
       - ./.env:/var/www/html/.env
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
+      - ./public/build:/var/www/html/public/build:ro
 
   queue:
     volumes:
       - ./.env:/var/www/html/.env
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
+      - ./public/build:/var/www/html/public/build:ro
 
   scheduler:
     volumes:
       - ./.env:/var/www/html/.env
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
+      - ./public/build:/var/www/html/public/build:ro
 
   web:
     ports:

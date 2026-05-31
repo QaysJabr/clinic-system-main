@@ -1,14 +1,14 @@
 {
-  "_calendar-DAIF5Vgg.js": {
-    "file": "assets/calendar-DAIF5Vgg.js",
+  "_calendar-Y2R2x90i.js": {
+    "file": "assets/calendar-Y2R2x90i.js",
     "name": "calendar"
   },
-  "_chart-Cn0dC9nJ.js": {
-    "file": "assets/chart-Cn0dC9nJ.js",
+  "_chart-DhnqJC1r.js": {
+    "file": "assets/chart-DhnqJC1r.js",
     "name": "chart"
   },
-  "_header-notifications-B9zqR8gn.js": {
-    "file": "assets/header-notifications-B9zqR8gn.js",
+  "_header-notifications-TM2J-K_p.js": {
+    "file": "assets/header-notifications-TM2J-K_p.js",
     "name": "header-notifications",
     "dynamicImports": [
       "resources/js/clinic-dashboard.js",
@@ -16,15 +16,15 @@
       "resources/js/appointment-slots.js"
     ]
   },
-  "_rolldown-runtime-85szGJ9g.js": {
-    "file": "assets/rolldown-runtime-85szGJ9g.js",
+  "_rolldown-runtime-DTavXwLA.js": {
+    "file": "assets/rolldown-runtime-DTavXwLA.js",
     "name": "rolldown-runtime"
   },
-  "_vendor-bHDdO1sN.js": {
-    "file": "assets/vendor-bHDdO1sN.js",
+  "_vendor-DYrHZSRw.js": {
+    "file": "assets/vendor-DYrHZSRw.js",
     "name": "vendor",
     "imports": [
-      "_rolldown-runtime-85szGJ9g.js"
+      "_rolldown-runtime-DTavXwLA.js"
     ]
   },
   "node_modules/@fontsource/cairo/files/cairo-arabic-400-normal.woff": {
@@ -148,7 +148,7 @@
     "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-800-normal.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-Dszzibq3.css",
+    "file": "assets/app-gIKYufGI.css",
     "name": "app",
     "names": [
       "app.css"
@@ -188,6 +188,15 @@
       "assets/cairo-latin-800-normal-ReWrxM5E.woff"
     ]
   },
+  "resources/css/landing.css": {
+    "file": "assets/landing-DxVAYIKX.css",
+    "name": "landing",
+    "names": [
+      "landing.css"
+    ],
+    "src": "resources/css/landing.css",
+    "isEntry": true
+  },
   "resources/js/admin-plans.js": {
     "file": "assets/admin-plans-TboVW8sA.js",
     "name": "admin-plans",
@@ -195,13 +204,13 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DRE54MDn.js",
+    "file": "assets/app-DxufKNB6.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_header-notifications-B9zqR8gn.js",
-      "_vendor-bHDdO1sN.js",
+      "_header-notifications-TM2J-K_p.js",
+      "_vendor-DYrHZSRw.js",
       "resources/js/saas-billing.js",
       "resources/js/saas-billing.js"
     ],
@@ -216,30 +225,36 @@
     "isEntry": true
   },
   "resources/js/appointments-calendar.js": {
-    "file": "assets/appointments-calendar-DTtIfW3a.js",
+    "file": "assets/appointments-calendar-C1JkRG4g.js",
     "name": "appointments-calendar",
     "src": "resources/js/appointments-calendar.js",
     "isEntry": true,
     "imports": [
-      "_calendar-DAIF5Vgg.js"
+      "_calendar-Y2R2x90i.js"
     ]
   },
   "resources/js/clinic-dashboard.js": {
-    "file": "assets/clinic-dashboard-C05AwhYe.js",
+    "file": "assets/clinic-dashboard-BgnOZjsX.js",
     "name": "clinic-dashboard",
     "src": "resources/js/clinic-dashboard.js",
     "isEntry": true,
     "imports": [
-      "_chart-Cn0dC9nJ.js"
+      "_chart-DhnqJC1r.js"
     ]
   },
+  "resources/js/landing.js": {
+    "file": "assets/landing-BrVvZOlh.js",
+    "name": "landing",
+    "src": "resources/js/landing.js",
+    "isEntry": true
+  },
   "resources/js/platform.js": {
-    "file": "assets/platform-Cpga7Xl4.js",
+    "file": "assets/platform-Cfcbq1lD.js",
     "name": "platform",
     "src": "resources/js/platform.js",
     "isEntry": true,
     "imports": [
-      "_header-notifications-B9zqR8gn.js",
+      "_header-notifications-TM2J-K_p.js",
       "resources/js/admin-plans.js",
       "resources/js/admin-plans.js"
     ]
