@@ -20,6 +20,7 @@
         config('marketing.demo_video_embed'),
         config('marketing.demo_video_url'),
     );
+    $androidApkUrl = config('marketing.android_apk_url');
 
     $featureTones = ['appointments', 'patients', 'invoices', 'reports', 'settings', 'staff'];
     $featureIcons = [
@@ -103,6 +104,9 @@
                         <a href="#demo" class="block px-4 py-2.5 text-sm font-semibold text-slate-700 no-underline hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800" onclick="this.closest('details')?.removeAttribute('open')">{{ __('saas.landing_video_kicker') }}</a>
                         <a href="#pricing" class="block px-4 py-2.5 text-sm font-semibold text-slate-700 no-underline hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800" onclick="this.closest('details')?.removeAttribute('open')">{{ __('saas.landing_nav_pricing') }}</a>
                         <a href="#faq" class="block px-4 py-2.5 text-sm font-semibold text-slate-700 no-underline hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800" onclick="this.closest('details')?.removeAttribute('open')">{{ __('saas.landing_nav_faq') }}</a>
+                        @if ($androidApkUrl)
+                            <a href="{{ $androidApkUrl }}" class="block border-t border-slate-100 px-4 py-2.5 text-sm font-bold text-emerald-700 no-underline hover:bg-emerald-50 dark:border-slate-800 dark:text-emerald-300 dark:hover:bg-emerald-950/40" rel="noopener" onclick="this.closest('details')?.removeAttribute('open')">{{ __('saas.landing_mobile_app_download') }}</a>
+                        @endif
                     </div>
                 </details>
                 <x-locale-globe />
@@ -146,17 +150,21 @@
                             </li>
                         @endforeach
                     </ul>
-                    <div class="mt-6 flex flex-wrap items-center gap-3">
-                        <p class="inline-flex items-center gap-2 rounded-xl border border-emerald-200/80 bg-emerald-50/90 px-4 py-2 text-xs font-semibold text-emerald-900 dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-200">
-                            <span aria-hidden="true">📱</span>
+                    <div class="mt-6 space-y-3">
+                        <p class="inline-flex max-w-full items-start gap-2 rounded-xl border border-emerald-200/80 bg-emerald-50/90 px-4 py-2 text-xs font-semibold leading-relaxed text-emerald-900 dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-200 sm:items-center">
+                            <span aria-hidden="true" class="shrink-0">📱</span>
                             <span>{{ __('saas.landing_mobile_app_badge') }} — {{ __('saas.landing_mobile_app_note') }}</span>
                         </p>
-                        @if ($androidApkUrl = config('marketing.android_apk_url'))
-                            <a href="{{ $androidApkUrl }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white no-underline shadow-sm transition hover:bg-emerald-700" download>
-                                {{ __('saas.landing_mobile_app_download') }}
-                            </a>
+                        @if ($androidApkUrl)
+                            <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                                <a href="{{ $androidApkUrl }}" class="inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white no-underline shadow-sm transition hover:bg-emerald-700 sm:w-auto sm:py-2 sm:text-xs" rel="noopener">
+                                    {{ __('saas.landing_mobile_app_download') }}
+                                </a>
+                                <span class="text-center text-xs font-medium text-slate-500 dark:text-slate-400 sm:text-start">{{ __('saas.landing_mobile_app_ios_soon') }}</span>
+                            </div>
+                        @else
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ __('saas.landing_mobile_app_ios_soon') }}</span>
                         @endif
-                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ __('saas.landing_mobile_app_ios_soon') }}</span>
                     </div>
                 </div>
 
@@ -596,12 +604,19 @@
 
     @guest
         <div class="pointer-events-none fixed inset-x-0 bottom-0 z-40 border-t border-slate-200/90 bg-white/95 p-3 backdrop-blur-md dark:border-slate-700 dark:bg-slate-950/95 sm:hidden" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));">
-            <div class="pointer-events-auto mx-auto flex max-w-lg gap-2">
-                <a href="{{ $pricingUrl }}" class="flex-1 rounded-xl border border-slate-300 bg-white py-3 text-center text-sm font-bold text-slate-800 no-underline dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">{{ __('saas.landing_cta_pricing') }}</a>
-                <a href="{{ $startUrl }}" class="flex-1 rounded-xl bg-[#0F4C81] py-3 text-center text-sm font-bold text-white no-underline dark:bg-[#3B82F6]">{{ __('saas.landing_mobile_cta') }}</a>
+            <div class="pointer-events-auto mx-auto flex max-w-lg flex-col gap-2">
+                @if ($androidApkUrl)
+                    <a href="{{ $androidApkUrl }}" class="w-full rounded-xl bg-emerald-600 py-3.5 text-center text-sm font-bold text-white no-underline shadow-sm transition hover:bg-emerald-700" rel="noopener">
+                        {{ __('saas.landing_mobile_app_download') }}
+                    </a>
+                @endif
+                <div class="flex gap-2">
+                    <a href="{{ $pricingUrl }}" class="flex-1 rounded-xl border border-slate-300 bg-white py-3 text-center text-sm font-bold text-slate-800 no-underline dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">{{ __('saas.landing_cta_pricing') }}</a>
+                    <a href="{{ $startUrl }}" class="flex-1 rounded-xl bg-[#0F4C81] py-3 text-center text-sm font-bold text-white no-underline dark:bg-[#3B82F6]">{{ __('saas.landing_mobile_cta') }}</a>
+                </div>
             </div>
         </div>
-        <div class="h-20 sm:hidden" aria-hidden="true"></div>
+        <div class="@if ($androidApkUrl) h-28 @else h-20 @endif sm:hidden" aria-hidden="true"></div>
     @endguest
 
     @include('partials.js-i18n')
