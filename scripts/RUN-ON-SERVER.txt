@@ -8,6 +8,11 @@ git pull origin main
 bash scripts/install-docker-vps.sh
 bash scripts/server-deploy-all.sh
 
+# ── تحديث الصفحة الرئيسية (تطبيق Android + زر حمّل APK) ──
+cd /var/www/clinic-system-main
+git pull origin main
+bash scripts/fix-storage-permissions.sh
+
 # ── أو أمر واحد (بعد git pull) ──
 # bash scripts/server-deploy-all.sh
 # (يثبّت Docker تلقائياً إذا ناقص)

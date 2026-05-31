@@ -146,10 +146,18 @@
                             </li>
                         @endforeach
                     </ul>
-                    <p class="mt-6 inline-flex items-center gap-2 rounded-xl border border-violet-200/80 bg-violet-50/90 px-4 py-2 text-xs font-semibold text-violet-900 dark:border-violet-800/60 dark:bg-violet-950/40 dark:text-violet-200">
-                        <span aria-hidden="true">📱</span>
-                        <span>{{ __('saas.landing_mobile_app_badge') }} — {{ __('saas.landing_mobile_app_note') }}</span>
-                    </p>
+                    <div class="mt-6 flex flex-wrap items-center gap-3">
+                        <p class="inline-flex items-center gap-2 rounded-xl border border-emerald-200/80 bg-emerald-50/90 px-4 py-2 text-xs font-semibold text-emerald-900 dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-200">
+                            <span aria-hidden="true">📱</span>
+                            <span>{{ __('saas.landing_mobile_app_badge') }} — {{ __('saas.landing_mobile_app_note') }}</span>
+                        </p>
+                        @if ($androidApkUrl = config('marketing.android_apk_url'))
+                            <a href="{{ $androidApkUrl }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white no-underline shadow-sm transition hover:bg-emerald-700" download>
+                                {{ __('saas.landing_mobile_app_download') }}
+                            </a>
+                        @endif
+                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ __('saas.landing_mobile_app_ios_soon') }}</span>
+                    </div>
                 </div>
 
                 {{-- App preview with mini sidebar --}}

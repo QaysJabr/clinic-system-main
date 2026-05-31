@@ -16,4 +16,7 @@ return [
 
     'demo_video_embed' => env('LANDING_DEMO_VIDEO_EMBED', ''),
 
+    /** Public APK download link shown on the landing page (Expo build artifact URL). */
+    'android_apk_url' => env('MOBILE_ANDROID_APK_URL', ''),
+
 ];
