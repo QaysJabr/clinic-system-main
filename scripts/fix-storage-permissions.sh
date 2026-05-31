@@ -3,6 +3,16 @@
 set -euo pipefail
 cd /var/www/clinic-system-main
 
+DEFAULT_APK_URL="https://expo.dev/artifacts/eas/oDShSAmKzS7hL3whoqCXLZ.apk"
+if ! grep -q '^MOBILE_ANDROID_APK_URL=.\+' .env 2>/dev/null; then
+  if grep -q '^MOBILE_ANDROID_APK_URL=' .env 2>/dev/null; then
+    sed -i "s|^MOBILE_ANDROID_APK_URL=.*|MOBILE_ANDROID_APK_URL=${DEFAULT_APK_URL}|" .env
+  else
+    echo "MOBILE_ANDROID_APK_URL=${DEFAULT_APK_URL}" >> .env
+  fi
+  echo "==> Set MOBILE_ANDROID_APK_URL in .env"
+fi
+
 echo "==> Create storage dirs on host"
 mkdir -p storage/logs \
   storage/framework/cache/data \
