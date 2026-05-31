@@ -96,6 +96,22 @@ fi
 
 resolve_app_port
 
+fix_storage_permissions() {
+  echo "==> Fix storage permissions (Docker volume mount)"
+  mkdir -p storage/logs \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/app/public \
+    bootstrap/cache
+  # www-data UID in official php-fpm image
+  chown -R 33:33 storage bootstrap/cache 2>/dev/null || \
+    chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+  chmod -R ug+rwx storage bootstrap/cache
+}
+
+fix_storage_permissions
+
 echo "==> Build frontend assets (required for nginx public volume)"
 if [[ -f public/build/manifest.json ]]; then
   echo "    Using pre-built public/build from git (skip npm)"
@@ -117,6 +133,10 @@ echo "==> Wait for postgres"
 sleep 8
 
 COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml"
+
+echo "==> Fix storage permissions inside container"
+${COMPOSE} exec -T -u root app chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+${COMPOSE} exec -T -u root app chmod -R ug+rwx storage bootstrap/cache 2>/dev/null || true
 
 echo "==> Laravel bootstrap (inside app container)"
 ${COMPOSE} exec -T app php artisan key:generate --force
