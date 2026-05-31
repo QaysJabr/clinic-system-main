@@ -1,0 +1,5 @@
+@echo off
+REM Run on VPS via MobaXterm (paste after uploading firebase-credentials.json)
+cd /var/www/clinic-system-main
+git pull origin main
+bash scripts/server-deploy-all.sh
