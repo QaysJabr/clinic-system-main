@@ -59,6 +59,13 @@ sed -i "s|^APP_DEBUG=.*|APP_DEBUG=false|" .env
 sed -i "s|^APP_URL=.*|APP_URL=http://${SERVER_IP}|" .env
 sed -i "s|^APP_PORT=.*|APP_PORT=${APP_PORT}|" .env || echo "APP_PORT=${APP_PORT}" >> .env
 
+# Docker PostgreSQL — Laravel must use same credentials as POSTGRES_* in compose
+sed -i 's|^DB_CONNECTION=.*|DB_CONNECTION=pgsql|' .env
+sed -i 's|^DB_HOST=.*|DB_HOST=postgres|' .env
+sed -i 's|^DB_PORT=.*|DB_PORT=5432|' .env
+sed -i 's|^DB_DATABASE=.*|DB_DATABASE=clinic|' .env
+sed -i 's|^DB_USERNAME=.*|DB_USERNAME=clinic|' .env
+
 if grep -q "CHANGE_ME_DB_PASSWORD" .env; then
   DB_PASS="$(openssl rand -base64 24 | tr -dc 'a-zA-Z0-9' | head -c 24)"
   sed -i "s|CHANGE_ME_DB_PASSWORD|${DB_PASS}|" .env
