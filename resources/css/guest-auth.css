@@ -1,0 +1,200 @@
+/**
+ * Guest / auth layout — animations and card contrast (loaded via app.css).
+ * Avoid universal * { font-family } — use Tailwind font-sans on body.
+ */
+
+@layer components {
+    body.guest-auth-body {
+        background-color: transparent;
+    }
+
+    html.dark body.guest-auth-body {
+        background-color: transparent;
+    }
+
+    @keyframes auth-page-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .auth-page-in {
+        animation: auth-page-in 0.45s ease-out both;
+    }
+
+    @keyframes auth-card-in {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .auth-card-in {
+        animation: auth-card-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+    }
+
+    @keyframes auth-shake {
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+        25% {
+            transform: translateX(3px);
+        }
+        75% {
+            transform: translateX(-3px);
+        }
+    }
+
+    .auth-shake {
+        animation: auth-shake 0.34s ease-in-out;
+    }
+
+    .auth-lp-heading {
+        letter-spacing: -0.02em;
+        text-wrap: balance;
+    }
+
+    .auth-form-shell {
+        width: 100%;
+        max-width: 24rem;
+        margin-inline: auto;
+    }
+
+    .auth-form-shell.auth-form-shell--wide {
+        max-width: 32rem;
+    }
+
+    .auth-split-aside {
+        background: linear-gradient(145deg, #0f4c81 0%, #0c3d66 45%, #0f172a 100%);
+    }
+
+    html.dark .auth-split-aside {
+        background: linear-gradient(145deg, #0c3d66 0%, #0f4c81 40%, #020617 100%);
+    }
+
+    @keyframes auth-preview-in {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .auth-preview-fade {
+        animation: auth-preview-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+    }
+
+    .auth-page-kicker {
+        letter-spacing: 0.06em;
+    }
+
+    .auth-card-shell .auth-field + .auth-field {
+        margin-top: 0;
+    }
+
+    .auth-card-shell form[data-auth-form] {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .auth-card-shell .auth-field-input {
+        min-height: 2.75rem;
+    }
+
+    .auth-card-shell {
+        background-color: rgb(255 255 255 / 0.98);
+        border-color: rgb(226 232 240 / 0.95);
+        color: #0f172a;
+    }
+
+    html.dark .auth-card-shell {
+        background-color: #0f172a;
+        border-color: rgb(71 85 105);
+        color: #f1f5f9;
+    }
+
+    .auth-field-surface {
+        background-color: rgb(255 255 255 / 0.98);
+    }
+
+    html.dark .auth-field-surface {
+        background-color: #0b1220;
+    }
+
+    .auth-card-shell .auth-page-title {
+        color: #0f172a;
+    }
+
+    html.dark .auth-card-shell .auth-page-title {
+        color: #f8fafc;
+    }
+
+    .auth-card-shell .auth-page-lead {
+        color: #334155;
+    }
+
+    html.dark .auth-card-shell .auth-page-lead {
+        color: #cbd5e1;
+    }
+
+    .auth-card-shell input:not([type='checkbox']):not([type='radio']) {
+        color: #0f172a;
+        -webkit-text-fill-color: #0f172a;
+        caret-color: #0f4c81;
+    }
+
+    html.dark .auth-card-shell input:not([type='checkbox']):not([type='radio']) {
+        color: #f8fafc;
+        -webkit-text-fill-color: #f8fafc;
+        caret-color: #60a5fa;
+    }
+
+    .auth-card-shell input::placeholder {
+        color: #64748b;
+        opacity: 1;
+    }
+
+    html.dark .auth-card-shell input::placeholder {
+        color: #94a3b8;
+    }
+
+    .auth-card-shell input:-webkit-autofill,
+    .auth-card-shell input:-webkit-autofill:hover,
+    .auth-card-shell input:-webkit-autofill:focus {
+        -webkit-text-fill-color: #0f172a;
+        transition: background-color 9999s ease-out;
+        box-shadow: 0 0 0 1000px #fff inset;
+    }
+
+    html.dark .auth-card-shell input:-webkit-autofill,
+    html.dark .auth-card-shell input:-webkit-autofill:hover,
+    html.dark .auth-card-shell input:-webkit-autofill:focus {
+        -webkit-text-fill-color: #f8fafc;
+        box-shadow: 0 0 0 1000px #1e293b inset;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .auth-page-in,
+        .auth-card-in,
+        .auth-shake {
+            animation: none !important;
+        }
+    }
+
+    form.is-auth-submitting .auth-submit-btn {
+        pointer-events: none;
+        opacity: 0.92;
+    }
+}

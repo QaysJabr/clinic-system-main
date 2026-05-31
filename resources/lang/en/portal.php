@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'My clinic file',
+    'meta' => 'View your upcoming appointments and open invoices with your clinic.',
+    'kicker' => 'Patient portal',
+    'welcome' => 'Hello, :name',
+    'file_number' => 'File number',
+    'section_upcoming' => 'Upcoming appointments',
+    'section_recent' => 'Recent visits',
+    'section_invoices' => 'Open invoices',
+    'outstanding_total' => 'Total outstanding',
+    'empty_upcoming' => 'No upcoming appointments scheduled.',
+    'empty_recent' => 'No past appointments on record yet.',
+    'empty_invoices' => 'No open invoices — you are all caught up.',
+    'th_date' => 'Date',
+    'th_time' => 'Time',
+    'th_doctor' => 'Doctor',
+    'th_status' => 'Status',
+    'th_invoice' => 'Invoice',
+    'th_amount' => 'Amount',
+    'th_remaining' => 'Remaining',
+    'due_date' => 'Due :date',
+    'privacy_note' => 'This page is private. Do not share the link with others.',
+    'flash_link_created' => 'Patient portal link created. Copy it from the highlighted box below.',
+    'share_portal' => 'Share patient portal',
+    'copy_portal_hint' => 'Send this link to the patient via WhatsApp or SMS.',
+];

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://www.schemastore.org/package.json",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "build:apk:cloud": "npm run build:apk:cloud --prefix mobile"
+  },
+  "devDependencies": {
+    "@fontsource/cairo": "^5.2.7",
+    "@fullcalendar/core": "^6.1.20",
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "^6.1.20",
+    "@fullcalendar/list": "^6.1.20",
+    "@fullcalendar/timegrid": "^6.1.20",
+    "@tailwindcss/forms": "^0.5.2",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/react": "~19.2.14",
+    "alpinejs": "^3.4.2",
+    "autoprefixer": "^10.4.2",
+    "axios": "^1.16.1",
+    "chart.js": "^4.5.1",
+    "concurrently": "^9.0.1",
+    "laravel-vite-plugin": "^3.0.0",
+    "postcss": "^8.4.31",
+    "puppeteer": "^25.1.0",
+    "tailwindcss": "^3.1.0",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.0"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "expo": {
+    "name": "Clinic System",
+    "slug": "clinic-system-main",
+    "owner": "jabrqays",
+    "extra": {
+      "apiBaseUrl": "http://192.168.80.157:8000/api/v1",
+      "eas": {
+        "projectId": "2c4c2c58-7518-4a22-831f-21b2f22d4ca4"
+      }
+    },
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "clinic",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F4C81"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.clinic.system",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      }
+    },
+    "android": {
+      "package": "com.clinic.system",
+      "edgeToEdgeEnabled": true,
+      "versionCode": 1,
+      "usesCleartextTraffic": true,
+      "adaptiveIcon": {
+        "backgroundColor": "#0F4C81",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "POST_NOTIFICATIONS"
+      ],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#0F4C81",
+          "defaultChannel": "clinic_default"
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-splash-screen",
+      "expo-sharing"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

@@ -1,0 +1,122 @@
+# Local / staging stack — clinic-system
+# Usage: cp .env.example .env && docker compose up -d
+
+services:
+  app:
+    build:
+      context: .
+      target: app
+    image: clinic-system-app:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      CACHE_STORE: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+    volumes:
+      - ./storage:/var/www/html/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - clinic
+
+  web:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:80"
+    volumes:
+      - ./public:/var/www/html/public:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - clinic
+
+  queue:
+    image: clinic-system-app:latest
+    restart: unless-stopped
+    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      QUEUE_CONNECTION: redis
+    volumes:
+      - ./storage:/var/www/html/storage
+    depends_on:
+      - app
+    networks:
+      - clinic
+
+  horizon:
+    image: clinic-system-app:latest
+    restart: unless-stopped
+    command: php artisan horizon
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      QUEUE_CONNECTION: redis
+    volumes:
+      - ./storage:/var/www/html/storage
+    depends_on:
+      - redis
+      - app
+    networks:
+      - clinic
+
+  scheduler:
+    image: clinic-system-app:latest
+    restart: unless-stopped
+    command: sh -c "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+    volumes:
+      - ./storage:/var/www/html/storage
+    depends_on:
+      - app
+    networks:
+      - clinic
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-clinic}
+      POSTGRES_USER: ${DB_USERNAME:-clinic}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-clinic} -d ${DB_DATABASE:-clinic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clinic
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    networks:
+      - clinic
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  clinic:
+    driver: bridge

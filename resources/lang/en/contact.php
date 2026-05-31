@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'Contact us',
+    'meta' => 'Get in touch with our team for support, sales, or general questions.',
+    'lead' => 'We are here to help clinics get started and stay running smoothly.',
+    'email' => 'Email',
+    'phone' => 'Phone',
+    'whatsapp' => 'WhatsApp',
+    'whatsapp_cta' => 'Chat with us on WhatsApp',
+    'whatsapp_prefill' => 'Hello, I would like to know more about the clinic platform.',
+    'empty' => 'Support contact details are not configured yet.',
+    'form_heading' => 'Send us a message',
+    'form_subtitle' => 'We usually reply within one business day.',
+    'field_name' => 'Your name',
+    'field_email' => 'Email',
+    'field_phone' => 'Phone',
+    'field_subject' => 'Subject',
+    'field_message' => 'Message',
+    'btn_send' => 'Send message',
+    'sent_success' => 'Thank you — your message was sent successfully.',
+    'send_failed_no_recipient' => 'We could not deliver your message because support email is not configured. Please try again later.',
+    'direct_heading' => 'Or reach us directly',
+    'mail_subject' => 'Contact form: :subject',
+    'mail_heading' => 'New contact form message',
+    'mail_footer' => 'Sent via the public contact form.',
+];

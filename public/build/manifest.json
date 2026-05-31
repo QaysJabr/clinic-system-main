@@ -1,0 +1,259 @@
+{
+  "_calendar-DAIF5Vgg.js": {
+    "file": "assets/calendar-DAIF5Vgg.js",
+    "name": "calendar"
+  },
+  "_chart-Cn0dC9nJ.js": {
+    "file": "assets/chart-Cn0dC9nJ.js",
+    "name": "chart"
+  },
+  "_header-notifications-B9zqR8gn.js": {
+    "file": "assets/header-notifications-B9zqR8gn.js",
+    "name": "header-notifications",
+    "dynamicImports": [
+      "resources/js/clinic-dashboard.js",
+      "resources/js/appointments-calendar.js",
+      "resources/js/appointment-slots.js"
+    ]
+  },
+  "_rolldown-runtime-85szGJ9g.js": {
+    "file": "assets/rolldown-runtime-85szGJ9g.js",
+    "name": "rolldown-runtime"
+  },
+  "_vendor-bHDdO1sN.js": {
+    "file": "assets/vendor-bHDdO1sN.js",
+    "name": "vendor",
+    "imports": [
+      "_rolldown-runtime-85szGJ9g.js"
+    ]
+  },
+  "node_modules/@fontsource/cairo/files/cairo-arabic-400-normal.woff": {
+    "file": "assets/cairo-arabic-400-normal-CAYwymWN.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-arabic-400-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-arabic-400-normal.woff2": {
+    "file": "assets/cairo-arabic-400-normal-DN15VWMM.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-arabic-400-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-arabic-500-normal.woff": {
+    "file": "assets/cairo-arabic-500-normal-BADfnM6v.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-arabic-500-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-arabic-500-normal.woff2": {
+    "file": "assets/cairo-arabic-500-normal-DDl0i4Xv.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-arabic-500-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-arabic-600-normal.woff": {
+    "file": "assets/cairo-arabic-600-normal-B3EOalmC.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-arabic-600-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-arabic-600-normal.woff2": {
+    "file": "assets/cairo-arabic-600-normal-rkrvveqO.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-arabic-600-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-arabic-700-normal.woff": {
+    "file": "assets/cairo-arabic-700-normal-CyOqhaeK.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-arabic-700-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-arabic-700-normal.woff2": {
+    "file": "assets/cairo-arabic-700-normal-D3nDedWX.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-arabic-700-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-arabic-800-normal.woff": {
+    "file": "assets/cairo-arabic-800-normal-CVTPwINa.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-arabic-800-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-arabic-800-normal.woff2": {
+    "file": "assets/cairo-arabic-800-normal-G1qvPr6G.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-arabic-800-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-400-normal.woff": {
+    "file": "assets/cairo-latin-400-normal-b1R3q6Pf.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-400-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-400-normal.woff2": {
+    "file": "assets/cairo-latin-400-normal-Dh7otpdh.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-400-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-500-normal.woff": {
+    "file": "assets/cairo-latin-500-normal-DkdkMETP.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-500-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-500-normal.woff2": {
+    "file": "assets/cairo-latin-500-normal-D-WQsSKQ.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-500-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-600-normal.woff": {
+    "file": "assets/cairo-latin-600-normal-buYOP1M3.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-600-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-600-normal.woff2": {
+    "file": "assets/cairo-latin-600-normal-mGS0uvCM.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-600-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-700-normal.woff": {
+    "file": "assets/cairo-latin-700-normal-6fcUy4Rc.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-700-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-700-normal.woff2": {
+    "file": "assets/cairo-latin-700-normal-C3GYtKbV.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-700-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-800-normal.woff": {
+    "file": "assets/cairo-latin-800-normal-ReWrxM5E.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-800-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-800-normal.woff2": {
+    "file": "assets/cairo-latin-800-normal-BBdTpBXf.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-800-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-ext-400-normal.woff": {
+    "file": "assets/cairo-latin-ext-400-normal-C_BIE9Qe.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-400-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-ext-400-normal.woff2": {
+    "file": "assets/cairo-latin-ext-400-normal-xCL67Y2R.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-400-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-ext-500-normal.woff": {
+    "file": "assets/cairo-latin-ext-500-normal-De4OTi8O.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-500-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-ext-500-normal.woff2": {
+    "file": "assets/cairo-latin-ext-500-normal-DxXN6Mb5.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-500-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-ext-600-normal.woff": {
+    "file": "assets/cairo-latin-ext-600-normal-DAfLYaOC.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-600-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-ext-600-normal.woff2": {
+    "file": "assets/cairo-latin-ext-600-normal-DuRnqffh.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-600-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-ext-700-normal.woff": {
+    "file": "assets/cairo-latin-ext-700-normal-htXca11Z.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-700-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-ext-700-normal.woff2": {
+    "file": "assets/cairo-latin-ext-700-normal-Cscux539.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-700-normal.woff2"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-ext-800-normal.woff": {
+    "file": "assets/cairo-latin-ext-800-normal-RObK5hVW.woff",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-800-normal.woff"
+  },
+  "node_modules/@fontsource/cairo/files/cairo-latin-ext-800-normal.woff2": {
+    "file": "assets/cairo-latin-ext-800-normal-ChnkP8hn.woff2",
+    "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-800-normal.woff2"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-Dszzibq3.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "assets": [
+      "assets/cairo-arabic-400-normal-DN15VWMM.woff2",
+      "assets/cairo-arabic-400-normal-CAYwymWN.woff",
+      "assets/cairo-latin-ext-400-normal-xCL67Y2R.woff2",
+      "assets/cairo-latin-ext-400-normal-C_BIE9Qe.woff",
+      "assets/cairo-latin-400-normal-Dh7otpdh.woff2",
+      "assets/cairo-latin-400-normal-b1R3q6Pf.woff",
+      "assets/cairo-arabic-500-normal-DDl0i4Xv.woff2",
+      "assets/cairo-arabic-500-normal-BADfnM6v.woff",
+      "assets/cairo-latin-ext-500-normal-DxXN6Mb5.woff2",
+      "assets/cairo-latin-ext-500-normal-De4OTi8O.woff",
+      "assets/cairo-latin-500-normal-D-WQsSKQ.woff2",
+      "assets/cairo-latin-500-normal-DkdkMETP.woff",
+      "assets/cairo-arabic-600-normal-rkrvveqO.woff2",
+      "assets/cairo-arabic-600-normal-B3EOalmC.woff",
+      "assets/cairo-latin-ext-600-normal-DuRnqffh.woff2",
+      "assets/cairo-latin-ext-600-normal-DAfLYaOC.woff",
+      "assets/cairo-latin-600-normal-mGS0uvCM.woff2",
+      "assets/cairo-latin-600-normal-buYOP1M3.woff",
+      "assets/cairo-arabic-700-normal-D3nDedWX.woff2",
+      "assets/cairo-arabic-700-normal-CyOqhaeK.woff",
+      "assets/cairo-latin-ext-700-normal-Cscux539.woff2",
+      "assets/cairo-latin-ext-700-normal-htXca11Z.woff",
+      "assets/cairo-latin-700-normal-C3GYtKbV.woff2",
+      "assets/cairo-latin-700-normal-6fcUy4Rc.woff",
+      "assets/cairo-arabic-800-normal-G1qvPr6G.woff2",
+      "assets/cairo-arabic-800-normal-CVTPwINa.woff",
+      "assets/cairo-latin-ext-800-normal-ChnkP8hn.woff2",
+      "assets/cairo-latin-ext-800-normal-RObK5hVW.woff",
+      "assets/cairo-latin-800-normal-BBdTpBXf.woff2",
+      "assets/cairo-latin-800-normal-ReWrxM5E.woff"
+    ]
+  },
+  "resources/js/admin-plans.js": {
+    "file": "assets/admin-plans-TboVW8sA.js",
+    "name": "admin-plans",
+    "src": "resources/js/admin-plans.js",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DRE54MDn.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_header-notifications-B9zqR8gn.js",
+      "_vendor-bHDdO1sN.js",
+      "resources/js/saas-billing.js",
+      "resources/js/saas-billing.js"
+    ],
+    "dynamicImports": [
+      "resources/js/clinic-dashboard.js"
+    ]
+  },
+  "resources/js/appointment-slots.js": {
+    "file": "assets/appointment-slots-BbTiIydi.js",
+    "name": "appointment-slots",
+    "src": "resources/js/appointment-slots.js",
+    "isEntry": true
+  },
+  "resources/js/appointments-calendar.js": {
+    "file": "assets/appointments-calendar-DTtIfW3a.js",
+    "name": "appointments-calendar",
+    "src": "resources/js/appointments-calendar.js",
+    "isEntry": true,
+    "imports": [
+      "_calendar-DAIF5Vgg.js"
+    ]
+  },
+  "resources/js/clinic-dashboard.js": {
+    "file": "assets/clinic-dashboard-C05AwhYe.js",
+    "name": "clinic-dashboard",
+    "src": "resources/js/clinic-dashboard.js",
+    "isEntry": true,
+    "imports": [
+      "_chart-Cn0dC9nJ.js"
+    ]
+  },
+  "resources/js/platform.js": {
+    "file": "assets/platform-Cpga7Xl4.js",
+    "name": "platform",
+    "src": "resources/js/platform.js",
+    "isEntry": true,
+    "imports": [
+      "_header-notifications-B9zqR8gn.js",
+      "resources/js/admin-plans.js",
+      "resources/js/admin-plans.js"
+    ]
+  },
+  "resources/js/public-booking.js": {
+    "file": "assets/public-booking-GWXmIjlC.js",
+    "name": "public-booking",
+    "src": "resources/js/public-booking.js",
+    "isEntry": true
+  },
+  "resources/js/saas-billing.js": {
+    "file": "assets/saas-billing-CxDNVa4-.js",
+    "name": "saas-billing",
+    "src": "resources/js/saas-billing.js",
+    "isEntry": true
+  }
+}

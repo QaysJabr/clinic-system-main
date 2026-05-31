@@ -1,0 +1,5 @@
+*.apk
+*.zip
+_apk_inspect/
+_apk_inspect2/
+node_modules/.cache/
