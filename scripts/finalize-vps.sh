@@ -38,6 +38,8 @@ ${COMPOSE} exec -T app php artisan route:clear
 
 echo "==> Seed roles/users"
 ${COMPOSE} exec -T app php artisan db:seed --class=RolePermissionSeeder --force
+${COMPOSE} exec -T app php artisan db:seed --class=PlanSeeder --force
+${COMPOSE} exec -T app php artisan db:seed --class=ExpenseCategorySeeder --force
 
 ${COMPOSE} exec -T app php artisan config:cache
 ${COMPOSE} exec -T app php artisan route:cache

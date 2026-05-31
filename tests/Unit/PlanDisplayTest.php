@@ -44,6 +44,16 @@ class PlanDisplayTest extends TestCase
             __('saas.feat_internal_chat'),
             PlanDisplay::localizedFeature('feat_internal_chat')
         );
+
+        $this->assertSame(
+            __('saas.feat_all_basic'),
+            PlanDisplay::localizedFeature('feat_all_basic')
+        );
+
+        $this->assertSame(
+            __('saas.feat_all_pro'),
+            PlanDisplay::localizedFeature('feat_all_pro')
+        );
     }
 
     public function test_yearly_savings_percent(): void

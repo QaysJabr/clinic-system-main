@@ -174,6 +174,8 @@ ${COMPOSE} exec -T app php artisan key:generate --force
 ${COMPOSE} exec -T app php artisan storage:link --force || true
 ${COMPOSE} exec -T app php artisan migrate --force
 ${COMPOSE} exec -T app php artisan db:seed --class=RolePermissionSeeder --force
+${COMPOSE} exec -T app php artisan db:seed --class=PlanSeeder --force
+${COMPOSE} exec -T app php artisan db:seed --class=ExpenseCategorySeeder --force
 ${COMPOSE} exec -T app php artisan config:cache
 ${COMPOSE} exec -T app php artisan route:cache
 ${COMPOSE} exec -T app php artisan view:cache

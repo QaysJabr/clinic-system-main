@@ -35,6 +35,10 @@ sleep 5
 echo "==> Fix perms inside container as root"
 ${COMPOSE} exec -T -u root app sh -c 'chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache'
 
+echo "==> Seed subscription plans"
+${COMPOSE} exec -T app php artisan db:seed --class=PlanSeeder --force
+${COMPOSE} exec -T app php artisan db:seed --class=ExpenseCategorySeeder --force
+
 echo "==> Clear caches"
 ${COMPOSE} exec -T app php artisan config:clear
 ${COMPOSE} exec -T app php artisan view:clear

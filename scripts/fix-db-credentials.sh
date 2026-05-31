@@ -72,6 +72,8 @@ fi
 
 ${COMPOSE} exec -T app php artisan config:clear
 ${COMPOSE} exec -T app php artisan db:seed --class=RolePermissionSeeder --force
+${COMPOSE} exec -T app php artisan db:seed --class=PlanSeeder --force
+${COMPOSE} exec -T app php artisan db:seed --class=ExpenseCategorySeeder --force
 ${COMPOSE} exec -T app php artisan config:cache
 
 echo ""
