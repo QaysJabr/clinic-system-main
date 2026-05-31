@@ -28,7 +28,9 @@ RUN test -f public/build/manifest.json || (echo "ERROR: public/build missing —
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R ug+rwx storage bootstrap/cache
 
-USER www-data
+COPY docker/entrypoint.sh /usr/local/bin/clinic-entrypoint.sh
+RUN chmod +x /usr/local/bin/clinic-entrypoint.sh
 
 EXPOSE 9000
+ENTRYPOINT ["clinic-entrypoint.sh"]
 CMD ["php-fpm"]
