@@ -1,10 +1,10 @@
 # Production image — PHP-FPM + extensions for Laravel clinic-system
-FROM php:8.3-fpm-bookworm AS base
+FROM php:8.4-fpm-bookworm AS base
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git unzip libpq-dev libzip-dev libpng-dev libjpeg62-turbo-dev libfreetype6-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) pdo_pgsql pgsql zip gd opcache pcntl \
+    && docker-php-ext-install -j$(nproc) pdo_pgsql pgsql zip gd opcache pcntl bcmath calendar \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && rm -rf /var/lib/apt/lists/*
