@@ -7,7 +7,7 @@ cd /var/www/clinic-system-main
 echo "==> git pull"
 git pull origin main 2>/dev/null || git pull
 
-DEFAULT_APK_URL="https://expo.dev/artifacts/eas/oDShSAmKzS7hL3whoqCXLZ.apk"
+DEFAULT_APK_URL="https://expo.dev/artifacts/eas/hQ1eYZyCn7kbN12unXkDcN.apk"
 DEFAULT_APK_VERSION="1.0.1"
 if ! grep -q '^MOBILE_ANDROID_APK_URL=.\+' .env 2>/dev/null; then
   if grep -q '^MOBILE_ANDROID_APK_URL=' .env 2>/dev/null; then

@@ -3,7 +3,7 @@
 set -euo pipefail
 cd /var/www/clinic-system-main
 
-DEFAULT_APK_URL="https://expo.dev/artifacts/eas/oDShSAmKzS7hL3whoqCXLZ.apk"
+DEFAULT_APK_URL="https://expo.dev/artifacts/eas/hQ1eYZyCn7kbN12unXkDcN.apk"
 if ! grep -q '^MOBILE_ANDROID_APK_URL=.\+' .env 2>/dev/null; then
   if grep -q '^MOBILE_ANDROID_APK_URL=' .env 2>/dev/null; then
     sed -i "s|^MOBILE_ANDROID_APK_URL=.*|MOBILE_ANDROID_APK_URL=${DEFAULT_APK_URL}|" .env
