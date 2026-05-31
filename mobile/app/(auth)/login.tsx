@@ -20,6 +20,7 @@ import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { useAppTheme } from '@/providers/ThemeProvider';
 import { formatApiError } from '@/utils/format';
 import { env } from '@/config/env';
+import { fetchMeta } from '@/api/services/auth.service';
 
 export default function LoginScreen() {
   const {
@@ -39,8 +40,27 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [biometricLoading, setBiometricLoading] = useState(false);
+  const [serverOnline, setServerOnline] = useState<boolean | null>(null);
 
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchMeta()
+      .then(() => {
+        if (!cancelled) {
+          setServerOnline(true);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setServerOnline(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     setError(null);
@@ -206,6 +226,13 @@ export default function LoginScreen() {
             </Text>
             <Text style={styles.serverUrl} selectable>
               {env.apiBaseUrl}
+            </Text>
+            <Text style={[styles.serverStatus, serverOnline === true && styles.serverStatusOk, serverOnline === false && styles.serverStatusFail]}>
+              {serverOnline === null
+                ? 'جاري فحص الاتصال بالسيرفر…'
+                : serverOnline
+                  ? '● السيرفر متصل — جاهز لتسجيل الدخول'
+                  : '● لا اتصال — ثبّت APK v' + appVersion + ' من الموقع واحذف القديم'}
             </Text>
             <Text style={styles.version}>Clinic System · v{appVersion}</Text>
           </View>
@@ -395,6 +422,19 @@ function createStyles(
       textAlign: 'center',
       fontSize: 11,
       marginTop: theme.spacing.xs,
+    },
+    serverStatus: {
+      ...theme.typography.caption,
+      color: 'rgba(255,255,255,0.75)',
+      textAlign: 'center',
+      fontSize: 11,
+      marginTop: theme.spacing.xs,
+    },
+    serverStatusOk: {
+      color: '#86efac',
+    },
+    serverStatusFail: {
+      color: '#fca5a5',
     },
     version: {
       ...theme.typography.caption,

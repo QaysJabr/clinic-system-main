@@ -1,20 +1,8 @@
 # ═══════════════════════════════════════════════════════════
 #  MobaXterm — السيرفر 31.97.61.205
+#  ⭐ أمر واحد فقط — ينفّذ كل شيء:
 # ═══════════════════════════════════════════════════════════
 
-# ── ⭐ الأهم: مزامنة السيرفر مع اللوكل (خطط + APK + كاش) ──
 cd /var/www/clinic-system-main
 git pull origin main
-bash scripts/sync-server-content.sh
-
-# ── إذا طلع: Docker not installed ──
-cd /var/www/clinic-system-main
-git pull origin main
-bash scripts/install-docker-vps.sh
-bash scripts/server-deploy-all.sh
-
-# ── إصلاح صلاحيات storage + إعادة بناء Docker ──
-# bash scripts/fix-storage-permissions.sh
-
-# ── firebase-credentials.json ──
-# cp storage/app/clinic-system-*-firebase-adminsdk-*.json storage/app/firebase-credentials.json
+bash scripts/fix-all-production.sh
