@@ -81,6 +81,20 @@ if grep -q "CHANGE_ME_STRONG_PASSWORD" .env; then
   echo ""
 fi
 
+if grep -q "CHANGE_ME_ADMIN_PASSWORD" .env || ! grep -q '^SEED_ADMIN_PASSWORD=.\{12,\}' .env 2>/dev/null; then
+  ADMIN_PASS="$(openssl rand -base64 16 | tr -dc 'a-zA-Z0-9' | head -c 16)"
+  if grep -q '^SEED_ADMIN_PASSWORD=' .env 2>/dev/null; then
+    sed -i "s|^SEED_ADMIN_PASSWORD=.*|SEED_ADMIN_PASSWORD=${ADMIN_PASS}|" .env
+  else
+    echo "SEED_ADMIN_PASSWORD=${ADMIN_PASS}" >> .env
+  fi
+  if grep -q "CHANGE_ME_ADMIN_PASSWORD" .env 2>/dev/null; then
+    sed -i "s|CHANGE_ME_ADMIN_PASSWORD|${ADMIN_PASS}|" .env
+  fi
+  echo "    Clinic admin password: ${ADMIN_PASS}"
+  echo "    Email: $(grep '^SEED_ADMIN_EMAIL=' .env 2>/dev/null | cut -d= -f2- || echo 'admin@clinic.local')"
+fi
+
 echo "==> Firebase / Push check"
 if [[ -f storage/app/firebase-credentials.json ]]; then
   sed -i 's|^PUSH_ENABLED=.*|PUSH_ENABLED=true|' .env

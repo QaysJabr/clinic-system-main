@@ -51,6 +51,26 @@ sleep 12
 echo "==> Migrate"
 ${COMPOSE} exec -T app php artisan config:clear
 ${COMPOSE} exec -T app php artisan migrate --force
+
+# Ensure seed passwords exist (min 12 chars for production)
+if ! grep -q '^SEED_ADMIN_PASSWORD=.\{12,\}' .env 2>/dev/null; then
+  ADMIN_PASS="$(openssl rand -base64 16 | tr -dc 'a-zA-Z0-9' | head -c 16)"
+  if grep -q '^SEED_ADMIN_PASSWORD=' .env 2>/dev/null; then
+    sed -i "s|^SEED_ADMIN_PASSWORD=.*|SEED_ADMIN_PASSWORD=${ADMIN_PASS}|" .env
+  else
+    echo "SEED_ADMIN_PASSWORD=${ADMIN_PASS}" >> .env
+  fi
+  echo "    Generated SEED_ADMIN_PASSWORD"
+  echo "    Clinic admin: admin@clinic.local / ${ADMIN_PASS}"
+fi
+if ! grep -q '^PLATFORM_OWNER_PASSWORD=.\{12,\}' .env 2>/dev/null; then
+  OWNER_PASS="$(openssl rand -base64 16 | tr -dc 'a-zA-Z0-9' | head -c 16)"
+  sed -i "s|^PLATFORM_OWNER_PASSWORD=.*|PLATFORM_OWNER_PASSWORD=${OWNER_PASS}|" .env
+  echo "    Generated PLATFORM_OWNER_PASSWORD"
+  echo "    Platform owner: $(grep '^PLATFORM_OWNER_EMAIL=' .env | cut -d= -f2-) / ${OWNER_PASS}"
+fi
+
+${COMPOSE} exec -T app php artisan config:clear
 ${COMPOSE} exec -T app php artisan db:seed --class=RolePermissionSeeder --force
 ${COMPOSE} exec -T app php artisan config:cache
 
