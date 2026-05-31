@@ -19,6 +19,7 @@ import { useAuth } from '@/auth/AuthContext';
 import { useScreenInsets } from '@/hooks/useScreenInsets';
 import { useAppTheme } from '@/providers/ThemeProvider';
 import { formatApiError } from '@/utils/format';
+import { env } from '@/config/env';
 
 export default function LoginScreen() {
   const {
@@ -141,7 +142,7 @@ export default function LoginScreen() {
                 keyboardType="email-address"
                 textContentType="username"
                 autoComplete="email"
-                placeholder="admin@clinic.local"
+                placeholder="admin@gmail.com"
                 returnKeyType="next"
               />
               <Input
@@ -202,6 +203,9 @@ export default function LoginScreen() {
             </View>
             <Text style={styles.footerHint}>
               نفس الحساب يوجّهك تلقائياً للوحة المناسبة
+            </Text>
+            <Text style={styles.serverUrl} selectable>
+              {env.apiBaseUrl}
             </Text>
             <Text style={styles.version}>Clinic System · v{appVersion}</Text>
           </View>
@@ -384,6 +388,13 @@ function createStyles(
       color: 'rgba(255,255,255,0.75)',
       textAlign: 'center',
       lineHeight: 18,
+    },
+    serverUrl: {
+      ...theme.typography.caption,
+      color: 'rgba(255,255,255,0.65)',
+      textAlign: 'center',
+      fontSize: 11,
+      marginTop: theme.spacing.xs,
     },
     version: {
       ...theme.typography.caption,

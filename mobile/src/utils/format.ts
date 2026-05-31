@@ -1,4 +1,5 @@
 import type { AppointmentStatus, InvoiceStatus, VisitStatus } from '@/types/api';
+import { env } from '@/config/env';
 
 export const appointmentStatusLabels: Record<AppointmentStatus, string> = {
   scheduled: 'مجدول',
@@ -53,7 +54,7 @@ export function formatApiError(error: unknown, fallback = 'حدث خطأ غير 
 
   if (error instanceof Error && error.message) {
     if (error.message === 'Network Error') {
-      return 'تعذر الاتصال بالخادم. تأكد أن Laravel يعمل على المنفذ 8000 وأن الجوال على نفس الشبكة.';
+      return `تعذر الاتصال بالخادم (${env.apiBaseUrl}). تحقق من الإنترنت أو أن السيرفر يعمل.`;
     }
     return error.message;
   }
