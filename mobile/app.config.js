@@ -20,5 +20,16 @@ module.exports = {
         process.env.GOOGLE_SERVICES_JSON ?? './google-services.json',
       usesCleartextTraffic: true,
     },
+    plugins: [
+      ...(appJson.expo.plugins ?? []),
+      [
+        'expo-build-properties',
+        {
+          android: {
+            usesCleartextTraffic: true,
+          },
+        },
+      ],
+    ],
   },
 };

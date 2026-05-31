@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 
-/** Production VPS — used in release builds when no env is baked in. */
+/** Production VPS — always used in release APK (not localhost:8000). */
 export const PRODUCTION_API_BASE_URL = 'http://31.97.61.205/api/v1';
 
 function normalizeBaseUrl(url: string): string {
@@ -28,23 +28,24 @@ function resolveDevApiBaseUrl(): string | null {
 
 const defaultHost = Platform.OS === 'android' ? '10.0.2.2' : '127.0.0.1';
 
-const configuredApiBaseUrl =
-  (Constants.expoConfig?.extra as { apiBaseUrl?: string } | undefined)?.apiBaseUrl ??
-  process.env.EXPO_PUBLIC_API_URL ??
-  null;
-
 function resolveApiBaseUrl(): string {
-  if (configuredApiBaseUrl) {
-    return normalizeBaseUrl(configuredApiBaseUrl);
+  // Release APK / production: always VPS — browser works, app must use same host.
+  if (!__DEV__) {
+    return PRODUCTION_API_BASE_URL;
   }
 
-  if (__DEV__) {
-    return normalizeBaseUrl(
-      resolveDevApiBaseUrl() ?? `http://${defaultHost}:8000/api/v1`,
-    );
+  const configured =
+    (Constants.expoConfig?.extra as { apiBaseUrl?: string } | undefined)?.apiBaseUrl ??
+    process.env.EXPO_PUBLIC_API_URL ??
+    null;
+
+  if (configured) {
+    return normalizeBaseUrl(configured);
   }
 
-  return PRODUCTION_API_BASE_URL;
+  return normalizeBaseUrl(
+    resolveDevApiBaseUrl() ?? `http://${defaultHost}:8000/api/v1`,
+  );
 }
 
 export const env = {

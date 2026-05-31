@@ -9,7 +9,7 @@
         "projectId": "2c4c2c58-7518-4a22-831f-21b2f22d4ca4"
       }
     },
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "scheme": "clinic",
     "icon": "./assets/icon.png",
@@ -31,7 +31,7 @@
     "android": {
       "package": "com.clinic.system",
       "edgeToEdgeEnabled": true,
-      "versionCode": 1,
+      "versionCode": 2,
       "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "backgroundColor": "#0F4C81",
