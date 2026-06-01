@@ -21,11 +21,17 @@
             <h2 class="m-0 text-base font-bold text-gray-800 dark:text-[#F3F4F6]">{{ __('patients.form_section_identity') }}</h2>
         </div>
         <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 sm:p-5">
-            <div>
-                <label for="file_number" class="{{ $labelClass }}">{{ __('patients.field_file_number') }}</label>
-                <input type="text" name="file_number" id="file_number" value="{{ old('file_number', $patient?->file_number) }}" class="{{ $inputClass }}" required>
-                @error('file_number')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
-            </div>
+            @if ($isEdit)
+                <div>
+                    <label for="file_number" class="{{ $labelClass }}">{{ __('patients.field_file_number') }}</label>
+                    <input type="text" id="file_number" value="{{ $patient->file_number }}" class="{{ $inputClass }} cursor-not-allowed bg-slate-50 dark:bg-slate-900/60" readonly>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ __('patients.file_number_readonly_hint') }}</p>
+                </div>
+            @else
+                <div class="sm:col-span-2 rounded-lg border border-sky-200 bg-sky-50/80 px-3 py-2.5 text-sm text-sky-900 dark:border-sky-900/50 dark:bg-sky-950/30 dark:text-sky-200">
+                    {{ __('patients.file_number_auto_hint') }}
+                </div>
+            @endif
             <div>
                 <label for="full_name" class="{{ $labelClass }}">{{ __('patients.field_full_name') }}</label>
                 <input type="text" name="full_name" id="full_name" value="{{ old('full_name', $patient?->full_name) }}" class="{{ $inputClass }}" required autocomplete="name">

@@ -55,13 +55,10 @@ final class PatientApiService
         }
 
         $fileNumber = trim((string) ($validated['file_number'] ?? ''));
-        if ($fileNumber === '') {
-            $fileNumber = $this->generateFileNumber($clinicId);
-        }
 
         $patient = Patient::query()->create([
             'clinic_id' => $clinicId,
-            'file_number' => $fileNumber,
+            'file_number' => $fileNumber !== '' ? $fileNumber : null,
             'full_name' => $validated['full_name'],
             'phone' => $validated['phone'] ?? null,
             'date_of_birth' => $validated['date_of_birth'] ?? null,
@@ -80,26 +77,5 @@ final class PatientApiService
         );
 
         return $patient;
-    }
-
-    private function generateFileNumber(int $clinicId): string
-    {
-        for ($attempt = 0; $attempt < 20; $attempt++) {
-            $seq = Patient::withoutGlobalScopes()
-                ->where('clinic_id', $clinicId)
-                ->count() + 1 + $attempt;
-            $candidate = 'P-'.str_pad((string) $seq, 5, '0', STR_PAD_LEFT);
-
-            $exists = Patient::withoutGlobalScopes()
-                ->where('clinic_id', $clinicId)
-                ->where('file_number', $candidate)
-                ->exists();
-
-            if (! $exists) {
-                return $candidate;
-            }
-        }
-
-        return 'P-'.now()->format('ymdHis');
     }
 }

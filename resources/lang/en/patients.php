@@ -76,6 +76,8 @@ return [
     'heading_edit_patient' => 'Edit patient',
 
     'field_file_number' => 'File number',
+    'file_number_auto_hint' => 'File number is assigned automatically on save (e.g. P-00001).',
+    'file_number_readonly_hint' => 'File number is fixed and cannot be changed here.',
     'field_full_name' => 'Full name',
     'field_phone' => 'Phone',
     'field_date_of_birth' => 'Date of birth',

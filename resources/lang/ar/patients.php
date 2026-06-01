@@ -76,6 +76,8 @@ return [
     'heading_edit_patient' => 'تعديل المريض',
 
     'field_file_number' => 'رقم الملف',
+    'file_number_auto_hint' => 'يُولَّد رقم الملف تلقائياً عند الحفظ (مثل P-00001).',
+    'file_number_readonly_hint' => 'رقم الملف ثابت ولا يُعدَّل من هنا.',
     'field_full_name' => 'الاسم الكامل',
     'field_phone' => 'الهاتف',
     'field_date_of_birth' => 'تاريخ الميلاد',

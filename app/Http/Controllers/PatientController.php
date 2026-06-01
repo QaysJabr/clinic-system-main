@@ -80,7 +80,6 @@ class PatientController extends Controller
         $clinicId = TenantValidation::clinicIdForRules();
 
         $request->validate([
-            'file_number' => ['required', 'string', Rule::unique('patients', 'file_number')->where(fn ($q) => $q->where('clinic_id', $clinicId))],
             'full_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'date_of_birth' => 'nullable|date',
@@ -100,7 +99,7 @@ class PatientController extends Controller
             }
         }
 
-        $patient = Patient::create($request->only(self::AUDIT_FIELDS));
+        $patient = Patient::create($request->only(array_diff(self::AUDIT_FIELDS, ['file_number'])));
 
         AuditLogger::log(
             'create',
@@ -149,7 +148,6 @@ class PatientController extends Controller
         $this->authorize('update', $patient);
 
         $request->validate([
-            'file_number' => ['required', 'string', Rule::unique('patients', 'file_number')->ignore($patient->id)->where(fn ($q) => $q->where('clinic_id', $patient->clinic_id))],
             'full_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'date_of_birth' => 'nullable|date',
@@ -162,7 +160,7 @@ class PatientController extends Controller
 
         $old = $this->patientSnapshot($patient);
 
-        $patient->update($request->only(self::AUDIT_FIELDS));
+        $patient->update($request->only(array_diff(self::AUDIT_FIELDS, ['file_number'])));
 
         AuditLogger::log(
             'update',
