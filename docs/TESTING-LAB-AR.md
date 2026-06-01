@@ -12,7 +12,19 @@
 
 > لا تشغّل `lab:smoke` إذا `APP_ENV=production` أو قاعدة البيانات اسمها `clinic` (الإنتاج).
 
-## أمر واحد
+## لوحة ويب (محلي فقط)
+
+مع `APP_ENV=local` افتح:
+
+**http://127.0.0.1:8000/testing-lab**
+
+- عرض آخر نتيجة ودرجة الجاهزية
+- سجل التشغيلات السابقة
+- زر **تشغيل الاختبارات** (نفس `lab:smoke`)
+
+> على السيرفر (`APP_ENV=production`) الرابط يعطي **404** — مقصود.
+
+## أمر واحد (بديل)
 
 ```powershell
 cd C:\Users\QAYS\Desktop\clinic-system-main

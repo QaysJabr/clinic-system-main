@@ -58,6 +58,7 @@ use App\Http\Controllers\StaffCompensationProfileController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StaffPaymentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TestingLab\TestingLabDashboardController;
 use App\Http\Controllers\VisitController;
 use App\Models\Plan;
 use App\Models\User;
@@ -65,6 +66,12 @@ use App\Support\ClinicPermissions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+
+Route::middleware(['testing.lab'])->prefix('testing-lab')->name('testing-lab.')->group(function (): void {
+    Route::get('/', [TestingLabDashboardController::class, 'index'])->name('index');
+    Route::post('/run', [TestingLabDashboardController::class, 'run'])->name('run');
+    Route::get('/runs/{runId}', [TestingLabDashboardController::class, 'show'])->name('show');
+});
 
 Route::get('/', function () {
     $plans = Plan::query()

@@ -63,6 +63,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'ensure.user.has.clinic' => EnsureUserHasClinic::class,
             'api.clinic' => \App\Http\Middleware\EnsureApiClinicUser::class,
             'api.platform' => \App\Http\Middleware\EnsureApiPlatformOwner::class,
+            'testing.lab' => \App\Http\Middleware\EnsureTestingLabEnvironment::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

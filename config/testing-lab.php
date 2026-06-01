@@ -19,4 +19,9 @@ return [
 
     'reports_path' => storage_path('testing-lab'),
 
+    'dashboard_enabled' => (bool) env('TESTING_LAB_DASHBOARD', true),
+
+    /** Allow POST /testing-lab/run from browser (local only). */
+    'dashboard_allow_run' => (bool) env('TESTING_LAB_DASHBOARD_RUN', true),
+
 ];
