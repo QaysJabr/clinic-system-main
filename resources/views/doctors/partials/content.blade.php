@@ -89,7 +89,7 @@
                             <th class="px-4 py-3 text-start font-bold text-gray-700 dark:text-[#E5E7EB] sm:px-5">{{ __('doctors.col_phone') }}</th>
                             <th class="px-4 py-3 text-start font-bold text-gray-700 dark:text-[#E5E7EB] sm:px-5">{{ __('doctors.col_room') }}</th>
                             <th class="px-4 py-3 text-start font-bold text-gray-700 dark:text-[#E5E7EB] sm:px-5">{{ __('doctors.col_status') }}</th>
-                            <th class="px-4 py-3 text-start font-bold text-gray-700 dark:text-[#E5E7EB] sm:px-5 w-[1%] whitespace-nowrap">{{ __('doctors.col_actions') }}</th>
+                            <th class="px-4 py-3 text-start font-bold text-gray-700 dark:text-[#E5E7EB] sm:px-5 min-w-[10.5rem] whitespace-nowrap">{{ __('doctors.col_actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,18 +115,30 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 sm:px-5">
-                                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                        <a href="{{ route('doctors.edit', $doctor) }}" data-no-spa class="font-semibold text-[#0F4C81] hover:underline dark:text-[#93C5FD]">{{ __('doctors.edit') }}</a>
-                                        <span class="text-gray-300 dark:text-[#4B5563]" aria-hidden="true">·</span>
-                                        <a href="{{ route('doctors.schedules.index', $doctor) }}" class="font-semibold text-slate-600 hover:underline dark:text-slate-300">{{ __('doctors.nav_schedules') }}</a>
+                                    <div class="flex min-w-[10.5rem] flex-col items-stretch gap-2">
+                                        <a href="{{ route('doctors.edit', $doctor) }}" data-no-spa
+                                           class="inline-flex items-center justify-center rounded-lg border border-[#0F4C81]/35 bg-[#0F4C81]/10 px-3 py-2.5 text-sm font-bold text-[#0F4C81] shadow-sm transition hover:border-[#0F4C81]/55 hover:bg-[#0F4C81]/20 dark:border-[#3B82F6]/45 dark:bg-[#3B82F6]/15 dark:text-[#93C5FD] dark:hover:bg-[#3B82F6]/25">
+                                            {{ __('doctors.edit') }}
+                                        </a>
+                                        <a href="{{ route('doctors.schedules.index', $doctor) }}"
+                                           class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:bg-slate-700/80">
+                                            {{ __('doctors.nav_schedules') }}
+                                        </a>
                                         @can(\App\Support\ClinicPermissions::VIEW_REPORTS)
-                                            <span class="text-gray-300 dark:text-[#4B5563]" aria-hidden="true">·</span>
-                                            <a href="{{ route('reports.doctors.show', $doctor) }}" data-spa class="font-semibold text-teal-700 hover:underline dark:text-teal-400">{{ __('doctors.financial_report_link') }}</a>
+                                            <a href="{{ route('reports.doctors.show', $doctor) }}" data-spa
+                                               class="inline-flex items-center justify-center rounded-lg border border-teal-300 bg-teal-50 px-3 py-2.5 text-sm font-bold text-teal-800 shadow-sm transition hover:bg-teal-100 dark:border-teal-700/60 dark:bg-teal-950/40 dark:text-teal-300 dark:hover:bg-teal-900/50">
+                                                {{ __('doctors.financial_report_link') }}
+                                            </a>
                                         @endcan
-                                        <form method="POST" action="{{ route('doctors.destroy', $doctor) }}" class="inline" data-confirm-title="{{ __('doctors.confirm_delete_title') }}" data-confirm="{{ __('doctors.confirm_delete_body') }}">
+                                        <form method="POST" action="{{ route('doctors.destroy', $doctor) }}" class="m-0"
+                                              data-confirm-title="{{ __('doctors.confirm_delete_title') }}"
+                                              data-confirm="{{ __('doctors.confirm_delete_body') }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="font-semibold text-red-600 hover:underline dark:text-red-400">{{ __('doctors.delete') }}</button>
+                                            <button type="submit"
+                                                    class="inline-flex w-full items-center justify-center rounded-lg border border-red-300 bg-red-50 px-3 py-2.5 text-sm font-bold text-red-700 shadow-sm transition hover:bg-red-100 dark:border-red-800/60 dark:bg-red-950/35 dark:text-red-300 dark:hover:bg-red-900/45">
+                                                {{ __('doctors.delete') }}
+                                            </button>
                                         </form>
                                     </div>
                                 </td>
