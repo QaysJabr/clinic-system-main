@@ -10,7 +10,7 @@ final class LocaleApplyTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_locale_apply_returns_full_html_json(): void
+    public function test_locale_apply_sets_session_and_signals_reload(): void
     {
         $this->withoutMiddleware(VerifyCsrfToken::class);
 
@@ -20,23 +20,20 @@ final class LocaleApplyTest extends TestCase
         ]);
 
         $response->assertOk()
-            ->assertJsonStructure(['ok', 'html'])
-            ->assertJson(['ok' => true]);
-
-        $html = $response->json('html');
-        $this->assertIsString($html);
-        $this->assertStringContainsString('locale-swap-root', $html);
+            ->assertJson([
+                'ok' => true,
+                'locale' => 'ar',
+                'reload' => true,
+            ]);
     }
 
-    public function test_locale_apply_returns_redirect_hint_when_route_redirects(): void
+    public function test_locale_apply_rejects_invalid_locale(): void
     {
         $this->withoutMiddleware(VerifyCsrfToken::class);
 
-        $response = $this->postJson(route('locale.apply'), [
-            'locale' => 'en',
-            'path' => '/dashboard',
-        ]);
-
-        $this->assertContains($response->status(), [409, 422]);
+        $this->postJson(route('locale.apply'), [
+            'locale' => 'fr',
+            'path' => '/',
+        ])->assertUnprocessable();
     }
 }

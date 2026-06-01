@@ -67,9 +67,12 @@ use App\Services\Reminders\InAppReminderChannelSender;
 use App\Services\Reminders\LaravelMailAppointmentReminderChannelSender;
 use App\Services\Reminders\ReminderChannelRegistry;
 use App\Services\Reminders\SmsAppointmentReminderChannelSender;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Cashier\Cashier;
@@ -100,6 +103,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        RateLimiter::for('booking-public', function (Request $request): Limit {
+            return Limit::perMinute((int) config('scheduling.public_booking_rate_limit_per_minute', 30))
+                ->by($request->ip() ?? 'guest');
+        });
+
         $this->registerTenantGlobalScopes();
 
         Gate::policy(Visit::class, VisitPolicy::class);

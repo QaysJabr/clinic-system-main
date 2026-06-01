@@ -53,6 +53,8 @@ final class AppointmentLifecycleService
     public function checkIn(Appointment $appointment): Visit
     {
         return DB::transaction(function () use ($appointment): Visit {
+            $appointment = Appointment::query()->lockForUpdate()->findOrFail($appointment->id);
+
             if (in_array($appointment->status, [
                 AppointmentStatus::Cancelled->value,
                 AppointmentStatus::NoShow->value,

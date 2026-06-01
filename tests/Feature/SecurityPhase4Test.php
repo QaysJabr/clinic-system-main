@@ -29,6 +29,8 @@ class SecurityPhase4Test extends TestCase
 
     public function test_two_factor_challenge_redirect_when_enabled(): void
     {
+        config(['security.two_factor.enabled' => true]);
+
         $this->seed(RolePermissionSeeder::class);
         $admin = User::query()->where('email', 'admin@clinic.local')->firstOrFail();
 
@@ -46,6 +48,8 @@ class SecurityPhase4Test extends TestCase
 
     public function test_two_factor_verify_marks_session(): void
     {
+        config(['security.two_factor.enabled' => true]);
+
         $this->seed(RolePermissionSeeder::class);
         $admin = User::query()->where('email', 'admin@clinic.local')->firstOrFail();
 

@@ -49,7 +49,10 @@ final class SubscriptionExpiryReminderService
                         continue;
                     }
 
-                    $daysRemaining = (int) ceil($asOf->diffInDays($clinic->subscription_expires_at, false));
+                    $daysRemaining = (int) $asOf->copy()->startOfDay()->diffInDays(
+                        $clinic->subscription_expires_at->copy()->startOfDay(),
+                        false
+                    );
                     if (! in_array($daysRemaining, $daysList, true)) {
                         continue;
                     }
@@ -74,7 +77,7 @@ final class SubscriptionExpiryReminderService
         }
 
         $owner = $clinic->owner;
-        if (! $owner || ! $owner->email || ! $owner->email_verified_at) {
+        if (! $owner || ! $owner->email) {
             return false;
         }
 

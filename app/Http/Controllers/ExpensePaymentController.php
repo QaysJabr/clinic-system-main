@@ -7,6 +7,7 @@ use App\Models\ExpensePayment;
 use App\Support\PaymentMethods;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -27,26 +28,30 @@ class ExpensePaymentController extends Controller
             'notes' => ['nullable', 'string', 'max:5000'],
         ]);
 
-        $paidAfter = round($expense->paidTotal() + (float) $validated['amount'], 2);
-        if ($paidAfter > (float) $expense->amount + 0.009) {
-            throw ValidationException::withMessages([
-                'amount' => __('expenses.payments_validation_sum_exceeds', ['remaining' => number_format($expense->remainingAmount(), 2)]),
+        return DB::transaction(function () use ($request, $expense, $validated): RedirectResponse {
+            $locked = Expense::query()->lockForUpdate()->findOrFail($expense->id);
+
+            $paidAfter = round($locked->paidTotal() + (float) $validated['amount'], 2);
+            if ($paidAfter > (float) $locked->amount + 0.009) {
+                throw ValidationException::withMessages([
+                    'amount' => __('expenses.payments_validation_sum_exceeds', ['remaining' => number_format($locked->remainingAmount(), 2)]),
+                ]);
+            }
+
+            $locked->payments()->create([
+                'amount' => $validated['amount'],
+                'paid_at' => $validated['paid_at'],
+                'payment_method' => $validated['payment_method'],
+                'notes' => $validated['notes'] ?? null,
+                'created_by' => $request->user()->id,
             ]);
-        }
 
-        $expense->payments()->create([
-            'amount' => $validated['amount'],
-            'paid_at' => $validated['paid_at'],
-            'payment_method' => $validated['payment_method'],
-            'notes' => $validated['notes'] ?? null,
-            'created_by' => $request->user()->id,
-        ]);
+            $locked->refreshHeaderPaymentMethodFromPayments();
 
-        $expense->refreshHeaderPaymentMethodFromPayments();
-
-        return redirect()
-            ->route('expenses.show', $expense)
-            ->with('success', __('expenses.payments_flash_recorded'));
+            return redirect()
+                ->route('expenses.show', $locked)
+                ->with('success', __('expenses.payments_flash_recorded'));
+        });
     }
 
     public function destroy(Request $request, Expense $expense, ExpensePayment $expensePayment): RedirectResponse

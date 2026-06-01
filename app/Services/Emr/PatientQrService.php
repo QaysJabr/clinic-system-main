@@ -16,7 +16,7 @@ final class PatientQrService
             'clinic_id' => $patient->clinic_id,
             'patient_id' => $patient->id,
             'token' => hash('sha256', $plain),
-            'expires_at' => null,
+            'expires_at' => now()->addDays((int) config('security.patient_portal.token_ttl_days', 90)),
         ]);
 
         return $plain;

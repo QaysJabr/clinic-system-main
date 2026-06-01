@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Platform;
 
 use App\Http\Controllers\Controller;
 use App\Models\Clinic;
+use App\Models\ClinicSubscription;
 use App\Models\Plan;
 use App\Models\SubscriptionPayment;
 use App\Services\InAppNotificationService;
+use App\Services\SubscriptionService;
 use App\Services\Platform\PlatformManualPaymentNotifier;
 use App\Services\PlatformDashboardService;
 use App\Services\SubscriptionPaymentRecorder;
@@ -141,10 +143,26 @@ final class PlatformClinicController extends Controller
 
     public function activate(Clinic $clinic): RedirectResponse|JsonResponse
     {
+        $expiresAt = $clinic->subscription_expires_at ?? now()->addYear();
+
         $clinic->forceFill([
             'is_active' => true,
             'subscription_status' => Clinic::STATUS_ACTIVE,
+            'subscription_expires_at' => $expiresAt,
         ])->save();
+
+        if ($clinic->plan_id) {
+            $plan = Plan::query()->find($clinic->plan_id);
+            if ($plan) {
+                $hasUsable = $clinic->clinicSubscriptions()
+                    ->whereIn('status', [ClinicSubscription::STATUS_ACTIVE, ClinicSubscription::STATUS_TRIAL])
+                    ->exists();
+
+                if (! $hasUsable) {
+                    app(SubscriptionService::class)->subscribe($clinic->fresh(), $plan, Plan::CYCLE_MONTHLY);
+                }
+            }
+        }
 
         $this->inAppNotifications->notifyPlatformClinicManaged(
             $clinic->fresh(),

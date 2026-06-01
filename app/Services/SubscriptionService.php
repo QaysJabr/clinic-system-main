@@ -30,11 +30,15 @@ final class SubscriptionService
             return false;
         }
 
-        if ($clinic->subscription_expires_at !== null && $clinic->subscription_expires_at->isPast()) {
+        if ($clinic->subscription_status !== Clinic::STATUS_ACTIVE) {
             return false;
         }
 
-        return $clinic->subscription_status === Clinic::STATUS_ACTIVE;
+        if ($clinic->subscription_expires_at === null || $clinic->subscription_expires_at->isPast()) {
+            return false;
+        }
+
+        return $clinic->subscription_expires_at->isFuture();
     }
 
     /**

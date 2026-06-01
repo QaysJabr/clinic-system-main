@@ -34,7 +34,10 @@ final class CheckSubscription
 
         if (! $clinic || ! app(SubscriptionService::class)->isActive($clinic)) {
             if ($request->expectsJson()) {
-                abort(403, 'انتهى اشتراك العيادة أو أنه غير نشط.');
+                return response()->json([
+                    'message' => 'انتهى اشتراك العيادة أو أنه غير نشط.',
+                    'code' => 'subscription_inactive',
+                ], 403, [], JSON_UNESCAPED_UNICODE);
             }
 
             return redirect()

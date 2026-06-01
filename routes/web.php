@@ -390,7 +390,7 @@ Route::middleware(['auth', 'verified', 'ensure.user.has.clinic', 'prevent.platfo
     });
 });
 
-Route::prefix('book')->name('booking.public.')->group(function () {
+Route::prefix('book')->name('booking.public.')->middleware('throttle:booking-public')->group(function () {
     Route::get('{token}', [PublicAppointmentBookingController::class, 'show'])->name('show');
     Route::get('{token}/slots', [PublicAppointmentBookingController::class, 'slots'])->name('slots');
     Route::post('{token}', [PublicAppointmentBookingController::class, 'store'])->name('store');

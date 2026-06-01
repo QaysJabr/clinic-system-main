@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Clinic;
 use App\Models\User;
 use App\Support\ClinicPermissions;
 use App\Support\SecureSeeder;
@@ -106,6 +107,14 @@ class RolePermissionSeeder extends Seeder
             $adminUser->forceFill(['clinic_id' => config('tenancy.default_clinic_id')])->save();
         }
         $adminUser->syncRoles(['admin']);
+
+        Clinic::query()
+            ->whereKey(config('tenancy.default_clinic_id'))
+            ->update([
+                'is_active' => true,
+                'subscription_status' => Clinic::STATUS_ACTIVE,
+                'subscription_expires_at' => now()->addYear(),
+            ]);
 
         $ownerEmail = config('platform.owner_email');
         if (! is_string($ownerEmail) || $ownerEmail === '') {

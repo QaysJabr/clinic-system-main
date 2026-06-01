@@ -29,17 +29,26 @@ final class InventoryProcedureConsumptionService
             return [];
         }
 
-        if ($this->visitAlreadyConsumed($visit)) {
-            return [];
-        }
-
-        $visit->loadMissing('structuredProcedures');
-
         $movements = [];
 
         DB::transaction(function () use ($visit, &$movements): void {
-            foreach ($visit->structuredProcedures as $procedure) {
-                $template = $this->findTemplate($visit->clinic_id, $procedure->name);
+            $locked = Visit::withoutGlobalScopes()
+                ->whereKey($visit->id)
+                ->lockForUpdate()
+                ->first();
+
+            if ($locked === null || $locked->status !== Visit::STATUS_COMPLETED) {
+                return;
+            }
+
+            if ($this->visitAlreadyConsumed($locked)) {
+                return;
+            }
+
+            $locked->loadMissing('structuredProcedures');
+
+            foreach ($locked->structuredProcedures as $procedure) {
+                $template = $this->findTemplate((int) $locked->clinic_id, $procedure->name);
                 if ($template === null || ! $template->auto_consume) {
                     continue;
                 }
@@ -58,18 +67,18 @@ final class InventoryProcedureConsumptionService
                             InventoryMovementType::CONSUMPTION,
                             (float) $line->quantity,
                             [
-                                'visit_id' => $visit->id,
+                                'visit_id' => $locked->id,
                                 'reference_type' => VisitProcedure::class,
                                 'reference_id' => $procedure->id,
                                 'notes' => __('inventory.consumption_note', [
                                     'procedure' => $procedure->name,
-                                    'visit' => $visit->id,
+                                    'visit' => $locked->id,
                                 ]),
                             ],
                         );
                         $movements[] = $movement;
                     } catch (\Throwable $e) {
-                        $this->alerts->notifyConsumptionFailed($visit, $procedure->name, $e->getMessage());
+                        $this->alerts->notifyConsumptionFailed($locked, $procedure->name, $e->getMessage());
                     }
                 }
             }

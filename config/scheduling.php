@@ -8,5 +8,6 @@ return [
     'allow_overbooking' => (bool) env('SCHEDULING_ALLOW_OVERBOOKING', false),
     'public_booking_token_ttl_hours' => (int) env('SCHEDULING_BOOKING_TOKEN_TTL', 48),
     'public_booking_clinic_token_ttl_hours' => (int) env('SCHEDULING_CLINIC_BOOKING_TOKEN_TTL', 8760),
+    'public_booking_rate_limit_per_minute' => (int) env('SCHEDULING_PUBLIC_BOOKING_RATE_LIMIT', 30),
     'reminder_lead_hours' => [24, 2],
 ];

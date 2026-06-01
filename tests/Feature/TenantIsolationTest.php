@@ -24,7 +24,8 @@ class TenantIsolationTest extends TestCase
         $clinicB = Clinic::query()->create([
             'name' => 'عيادة تجريبية ب',
             'subscription_status' => Clinic::STATUS_ACTIVE,
-            'subscription_expires_at' => null,
+            'subscription_expires_at' => now()->addYear(),
+            'is_active' => true,
         ]);
 
         $this->assertNotSame((int) $clinicA->id, (int) $clinicB->id);
