@@ -115,26 +115,12 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 sm:px-5">
-                                    <div class="flex flex-wrap items-center gap-2" role="group" aria-label="{{ __('doctors.col_actions') }}">
-                                        <a href="{{ route('doctors.edit', $doctor) }}" data-no-spa
-                                           class="inline-flex items-center gap-1.5 rounded-lg bg-[#0F4C81] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#0c3d66] dark:bg-[#3B82F6] dark:hover:bg-blue-600">
-                                            <svg class="h-3.5 w-3.5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
-                                            </svg>
-                                            {{ __('doctors.edit') }}
-                                        </a>
-                                        <form method="POST" action="{{ route('doctors.destroy', $doctor) }}" class="m-0 inline"
-                                              data-confirm-title="{{ __('doctors.confirm_delete_title') }}"
-                                              data-confirm="{{ __('doctors.confirm_delete_body') }}">
+                                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                        <a href="{{ route('doctors.edit', $doctor) }}" data-no-spa class="font-semibold text-[#0F4C81] hover:underline dark:text-[#93C5FD]">{{ __('doctors.edit') }}</a>
+                                        <form method="POST" action="{{ route('doctors.destroy', $doctor) }}" class="inline" data-confirm-title="{{ __('doctors.confirm_delete_title') }}" data-confirm="{{ __('doctors.confirm_delete_body') }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit"
-                                                    class="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500">
-                                                <svg class="h-3.5 w-3.5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                </svg>
-                                                {{ __('doctors.delete') }}
-                                            </button>
+                                            <button type="submit" class="font-semibold text-red-600 hover:underline dark:text-red-400">{{ __('doctors.delete') }}</button>
                                         </form>
                                     </div>
                                 </td>
