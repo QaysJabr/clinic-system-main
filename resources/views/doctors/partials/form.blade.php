@@ -149,15 +149,20 @@
 </form>
 
 @if ($linkOnly && $linkedStaff->isNotEmpty())
+@php
+    $staffPickerData = $linkedStaff->map(static function ($s) {
+        return [
+            'id' => $s->id,
+            'full_name' => $s->full_name,
+            'phone' => $s->phone,
+            'email' => $s->email,
+            'status' => $s->status,
+        ];
+    })->values();
+@endphp
 <script>
 (function () {
-    const staffData = @json($linkedStaff->map(fn ($s) => [
-        'id' => $s->id,
-        'full_name' => $s->full_name,
-        'phone' => $s->phone,
-        'email' => $s->email,
-        'status' => $s->status,
-    ])->values());
+    const staffData = @json($staffPickerData);
     const select = document.getElementById('staff_id');
     const summary = document.getElementById('staff-summary');
     if (!select || !summary) return;
