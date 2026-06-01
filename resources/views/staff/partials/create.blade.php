@@ -26,6 +26,7 @@
 
     @include('staff.partials.form', [
         'linkableUsers' => $linkableUsers,
+        'defaultRoleType' => $defaultRoleType ?? null,
         'action' => route('staff.store'),
         'method' => 'POST',
     ])

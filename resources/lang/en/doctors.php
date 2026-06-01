@@ -74,7 +74,17 @@ return [
 
     'staff_link_label' => 'Link to staff (for invoice percentage)',
     'staff_none_option' => '— Not linked —',
+    'staff_pick_label' => 'Select staff member with doctor role',
     'staff_link_hint' => 'Choose a staff member with the «doctor» role and percentage compensation so earnings are calculated automatically from paid invoices for visits assigned to this clinical doctor.',
+    'form_section_staff_link' => 'Staff link',
+    'form_section_clinical' => 'Clinical details',
+    'add_via_staff_hint' => 'To add a new doctor, create a staff member with the «doctor» role first — then complete clinical details here.',
+    'add_via_staff_link' => 'Add new doctor staff member',
+    'no_staff_without_doctor' => 'No doctor-role staff without a clinical profile. Add staff first.',
+    'linked_staff_readonly' => 'Identity is linked to staff: :name',
+    'edit_staff_record' => 'Edit staff record',
+    'redirect_add_via_staff' => 'Add the doctor from Staff (doctor role), then complete the link here.',
+    'staff_already_has_doctor' => 'This staff member already has a doctor profile.',
 
     'cancel' => 'Cancel',
     'save' => 'Save',

@@ -13,6 +13,7 @@
 
     @include('doctors.partials.form', [
         'linkedStaff' => $linkedStaff,
+        'linkOnly' => $linkOnly ?? false,
         'action' => route('doctors.store'),
         'method' => 'POST',
     ])

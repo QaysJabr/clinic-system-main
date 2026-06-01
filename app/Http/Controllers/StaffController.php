@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Doctor;
 use App\Models\Staff;
 use App\Models\User;
+use App\Services\StaffDoctorSyncService;
 use App\Support\AuditLogger;
 use App\Support\Queries\StaffListQuery;
+use App\Support\TenantValidation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +17,10 @@ use Illuminate\View\View;
 
 class StaffController extends Controller
 {
+    public function __construct(
+        private readonly StaffDoctorSyncService $staffDoctorSync,
+    ) {}
+
     public function index(Request $request): View
     {
         $scope = Staff::query();
@@ -54,36 +61,31 @@ class StaffController extends Controller
         $linkableUsers = $linkableUsersQuery->get(['id', 'name', 'email']);
 
         $pageTitle = __('staff.page_create');
+        $defaultRoleType = $request->query('role') === 'doctor' ? 'doctor' : null;
 
         if ($request->ajax()) {
-            return view('staff.partials.create', compact('linkableUsers', 'pageTitle'));
+            return view('staff.partials.create', compact('linkableUsers', 'pageTitle', 'defaultRoleType'));
         }
 
-        return view('staff.create', compact('linkableUsers', 'pageTitle'));
+        return view('staff.create', compact('linkableUsers', 'pageTitle', 'defaultRoleType'));
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $userExists = Rule::exists('users', 'id');
-        if (! Auth::user()?->hasRole('super_admin') && Auth::user()?->clinic_id) {
-            $userExists = Rule::exists('users', 'id')->where(fn ($q) => $q->where('clinic_id', Auth::user()->clinic_id));
-        }
-
-        $validated = $request->validate([
-            'full_name' => ['required', 'string', 'max:255'],
-            'role_type' => ['required', 'string', Rule::in(Staff::ROLE_TYPES)],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'email' => ['nullable', 'string', 'email', 'max:255'],
-            'user_id' => ['nullable', 'integer', $userExists, Rule::unique('staff', 'user_id')],
-            'status' => ['required', 'string', 'in:active,inactive'],
-        ]);
-
+        $validated = $this->validateStaff($request);
         $validated['user_id'] = $request->filled('user_id') ? $request->integer('user_id') : null;
 
-        Staff::query()->create($validated);
+        $staff = Staff::query()->create($validated);
+
+        if ($staff->role_type === 'doctor') {
+            $this->staffDoctorSync->syncDoctorForStaff($staff, $this->staffDoctorSync->doctorFieldsFromRequest($request));
+
+            return redirect()->route('staff.index')
+                ->with('success', __('staff.flash_created_doctor'));
+        }
 
         return redirect()->route('staff.index')
-            ->with('success', 'تم إضافة الموظف بنجاح.');
+            ->with('success', __('staff.flash_created'));
     }
 
     public function edit(Request $request, Staff $staff): View
@@ -107,7 +109,7 @@ class StaffController extends Controller
         }
 
         $linkableUsers = $linkableUsersQuery->get(['id', 'name', 'email']);
-        $staff->load('compensationProfile');
+        $staff->load(['compensationProfile', 'doctor']);
 
         $pageTitle = __('staff.page_edit');
 
@@ -120,23 +122,23 @@ class StaffController extends Controller
 
     public function update(Request $request, Staff $staff): RedirectResponse
     {
-        $userExists = Rule::exists('users', 'id');
-        if (! Auth::user()?->hasRole('super_admin') && Auth::user()?->clinic_id) {
-            $userExists = Rule::exists('users', 'id')->where(fn ($q) => $q->where('clinic_id', Auth::user()->clinic_id));
-        }
-
-        $validated = $request->validate([
-            'full_name' => ['required', 'string', 'max:255'],
-            'role_type' => ['required', 'string', Rule::in(Staff::ROLE_TYPES)],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'email' => ['nullable', 'string', 'email', 'max:255'],
-            'user_id' => ['nullable', 'integer', $userExists, Rule::unique('staff', 'user_id')->ignore($staff->id)],
-            'status' => ['required', 'string', 'in:active,inactive'],
-        ]);
-
+        $validated = $this->validateStaff($request, $staff);
         $validated['user_id'] = $request->filled('user_id') ? $request->integer('user_id') : null;
 
+        $wasDoctor = $staff->role_type === 'doctor';
         $staff->update($validated);
+        $staff->refresh();
+
+        if ($staff->role_type === 'doctor') {
+            $this->staffDoctorSync->syncDoctorForStaff($staff, $this->staffDoctorSync->doctorFieldsFromRequest($request));
+
+            return redirect()->route('staff.index')
+                ->with('success', $wasDoctor ? __('staff.flash_updated') : __('staff.flash_updated_doctor_linked'));
+        }
+
+        if ($wasDoctor) {
+            $this->staffDoctorSync->removeDoctorForStaff($staff);
+        }
 
         return redirect()->route('staff.index')
             ->with('success', __('staff.flash_updated'));
@@ -152,6 +154,10 @@ class StaffController extends Controller
             'user_id' => $staff->user_id,
         ];
 
+        if ($staff->role_type === 'doctor') {
+            $this->staffDoctorSync->removeDoctorForStaff($staff);
+        }
+
         $staff->delete();
 
         AuditLogger::log(
@@ -165,5 +171,46 @@ class StaffController extends Controller
 
         return redirect()->route('staff.index')
             ->with('success', __('staff.flash_deleted'));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validateStaff(Request $request, ?Staff $staff = null): array
+    {
+        $userExists = Rule::exists('users', 'id');
+        if (! Auth::user()?->hasRole('super_admin') && Auth::user()?->clinic_id) {
+            $userExists = Rule::exists('users', 'id')->where(fn ($q) => $q->where('clinic_id', Auth::user()->clinic_id));
+        }
+
+        $clinicId = TenantValidation::clinicIdForRules();
+
+        $rules = [
+            'full_name' => ['required', 'string', 'max:255'],
+            'role_type' => ['required', 'string', Rule::in(Staff::ROLE_TYPES)],
+            'phone' => ['nullable', 'string', 'max:50'],
+            'email' => ['nullable', 'string', 'email', 'max:255'],
+            'user_id' => ['nullable', 'integer', $userExists, Rule::unique('staff', 'user_id')->ignore($staff?->id)],
+            'status' => ['required', 'string', 'in:active,inactive'],
+        ];
+
+        if ($request->input('role_type') === 'doctor') {
+            $ignoreDoctorId = $staff
+                ? Doctor::query()->where('staff_id', $staff->id)->value('id')
+                : null;
+
+            $rules['specialty'] = ['nullable', 'string', 'max:255'];
+            $rules['license_number'] = [
+                'nullable',
+                'string',
+                Rule::unique('doctors', 'license_number')
+                    ->where(fn ($q) => $q->where('clinic_id', $clinicId))
+                    ->ignore($ignoreDoctorId),
+            ];
+            $rules['room_number'] = ['nullable', 'string', 'max:50'];
+            $rules['notes'] = ['nullable', 'string'];
+        }
+
+        return $request->validate($rules);
     }
 }

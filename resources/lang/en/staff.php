@@ -40,8 +40,13 @@ return [
     'compensation_card_add' => 'Add compensation profile',
 
     'flash_created' => 'Staff member added successfully.',
+    'flash_created_doctor' => 'Doctor added (staff + clinical profile) successfully.',
     'flash_updated' => 'Staff member updated successfully.',
+    'flash_updated_doctor_linked' => 'Staff member and linked doctor profile updated.',
     'flash_deleted' => 'Staff member deleted.',
+
+    'doctor_section_title' => 'Clinical doctor details',
+    'doctor_section_intro' => 'Specialty, license, and room — name and contact are managed in the staff fields above.',
 
     'section_list_kicker' => 'Staff roster',
     'all_records' => 'All records',

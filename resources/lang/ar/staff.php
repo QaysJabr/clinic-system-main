@@ -40,8 +40,13 @@ return [
     'compensation_card_add' => 'إضافة ملف تعويض',
 
     'flash_created' => 'تم إضافة الموظف بنجاح.',
+    'flash_created_doctor' => 'تم إضافة الطبيب (موظف + ملف طبيب) بنجاح.',
     'flash_updated' => 'تم تحديث بيانات الموظف.',
+    'flash_updated_doctor_linked' => 'تم تحديث بيانات الموظف وملف الطبيب المرتبط.',
     'flash_deleted' => 'تم حذف الموظف.',
+
+    'doctor_section_title' => 'بيانات الطبيب السريرية',
+    'doctor_section_intro' => 'التخصص والترخيص والغرفة — الاسم والتواصل يُداران من بيانات الموظف أعلاه.',
 
     'section_list_kicker' => 'قائمة الموظفين',
     'all_records' => 'جميع السجلات',

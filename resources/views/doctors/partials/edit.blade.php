@@ -16,6 +16,7 @@
     @include('doctors.partials.form', [
         'doctor' => $doctor,
         'linkedStaff' => $linkedStaff,
+        'linkOnly' => $linkOnly ?? false,
         'action' => route('doctors.update', $doctor),
         'method' => 'PUT',
     ])

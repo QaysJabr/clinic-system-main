@@ -156,4 +156,12 @@ class Staff extends Model
             'id'
         );
     }
+
+    /**
+     * @return HasOne<Doctor, $this>
+     */
+    public function doctor(): HasOne
+    {
+        return $this->hasOne(Doctor::class);
+    }
 }

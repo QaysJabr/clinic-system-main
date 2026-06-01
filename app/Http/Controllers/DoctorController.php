@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Doctor;
 use App\Models\Staff;
+use App\Services\StaffDoctorSyncService;
 use App\Support\AuditLogger;
 use App\Support\DoctorFinancialSummary;
 use App\Support\Queries\DoctorListQuery;
@@ -61,38 +62,51 @@ class DoctorController extends Controller
     {
         $linkedStaff = Staff::query()
             ->where('role_type', 'doctor')
+            ->whereDoesntHave('doctor')
             ->orderBy('full_name')
-            ->get(['id', 'full_name']);
+            ->get(['id', 'full_name', 'phone', 'email', 'status']);
 
         $pageTitle = __('doctors.page_title_create');
+        $linkOnly = true;
 
         if ($request->ajax()) {
-            return view('doctors.partials.create', compact('linkedStaff', 'pageTitle'));
+            return view('doctors.partials.create', compact('linkedStaff', 'pageTitle', 'linkOnly'));
         }
 
-        return view('doctors.create', compact('linkedStaff', 'pageTitle'));
+        return view('doctors.create', compact('linkedStaff', 'pageTitle', 'linkOnly'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, StaffDoctorSyncService $staffDoctorSync)
     {
+        if (! $request->filled('staff_id')) {
+            return redirect()
+                ->route('staff.create', ['role' => 'doctor'])
+                ->with('info', __('doctors.redirect_add_via_staff'));
+        }
+
         $clinicId = TenantValidation::clinicIdForRules();
+        $staff = Staff::query()
+            ->where('role_type', 'doctor')
+            ->findOrFail($request->integer('staff_id'));
+
+        if (Doctor::query()->where('staff_id', $staff->id)->exists()) {
+            return back()
+                ->withInput()
+                ->withErrors(['staff_id' => __('doctors.staff_already_has_doctor')]);
+        }
 
         $request->validate([
-            'staff_id' => ['nullable', 'integer', Rule::exists('staff', 'id')->where(fn ($q) => $q->where('role_type', 'doctor')->where('clinic_id', $clinicId))],
-            'full_name' => 'required|string|max:255',
-            'specialty' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'email' => ['nullable', 'email', Rule::unique('doctors', 'email')->where(fn ($q) => $q->where('clinic_id', $clinicId))],
+            'staff_id' => ['required', 'integer', Rule::exists('staff', 'id')->where(fn ($q) => $q->where('role_type', 'doctor')->where('clinic_id', $clinicId))],
+            'specialty' => ['nullable', 'string', 'max:255'],
             'license_number' => ['nullable', 'string', Rule::unique('doctors', 'license_number')->where(fn ($q) => $q->where('clinic_id', $clinicId))],
-            'room_number' => 'nullable|string|max:50',
-            'status' => 'required|in:active,inactive',
-            'notes' => 'nullable|string',
+            'room_number' => ['nullable', 'string', 'max:50'],
+            'notes' => ['nullable', 'string'],
         ]);
 
-        $doctor = Doctor::create($this->doctorPayloadFromRequest($request));
+        $doctor = $staffDoctorSync->syncDoctorForStaff($staff, $staffDoctorSync->doctorFieldsFromRequest($request));
 
         AuditLogger::log(
             'create',
@@ -133,42 +147,62 @@ class DoctorController extends Controller
      */
     public function edit(Request $request, string $id)
     {
-        $doctor = Doctor::findOrFail($id);
+        $doctor = Doctor::with('staff')->findOrFail($id);
         $linkedStaff = Staff::query()
             ->where('role_type', 'doctor')
             ->orderBy('full_name')
             ->get(['id', 'full_name']);
 
         $pageTitle = __('doctors.page_title_edit');
+        $linkOnly = false;
 
         if ($request->ajax()) {
-            return view('doctors.partials.edit', compact('doctor', 'linkedStaff', 'pageTitle'));
+            return view('doctors.partials.edit', compact('doctor', 'linkedStaff', 'pageTitle', 'linkOnly'));
         }
 
-        return view('doctors.edit', compact('doctor', 'linkedStaff', 'pageTitle'));
+        return view('doctors.edit', compact('doctor', 'linkedStaff', 'pageTitle', 'linkOnly'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id, StaffDoctorSyncService $staffDoctorSync)
     {
-        $doctor = Doctor::findOrFail($id);
+        $doctor = Doctor::with('staff')->findOrFail($id);
 
-        $request->validate([
-            'staff_id' => ['nullable', 'integer', Rule::exists('staff', 'id')->where(fn ($q) => $q->where('role_type', 'doctor')->where('clinic_id', $doctor->clinic_id))],
-            'full_name' => 'required|string|max:255',
-            'specialty' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'email' => ['nullable', 'email', Rule::unique('doctors', 'email')->ignore($doctor->id)->where(fn ($q) => $q->where('clinic_id', $doctor->clinic_id))],
-            'license_number' => ['nullable', 'string', Rule::unique('doctors', 'license_number')->ignore($doctor->id)->where(fn ($q) => $q->where('clinic_id', $doctor->clinic_id))],
-            'room_number' => 'nullable|string|max:50',
-            'status' => 'required|in:active,inactive',
-            'notes' => 'nullable|string',
-        ]);
+        if ($doctor->staff_id) {
+            $request->validate([
+                'specialty' => ['nullable', 'string', 'max:255'],
+                'license_number' => [
+                    'nullable',
+                    'string',
+                    Rule::unique('doctors', 'license_number')
+                        ->where(fn ($q) => $q->where('clinic_id', $doctor->clinic_id))
+                        ->ignore($doctor->id),
+                ],
+                'room_number' => ['nullable', 'string', 'max:50'],
+                'notes' => ['nullable', 'string'],
+            ]);
 
-        $old = $doctor->only(self::AUDIT_FIELDS);
-        $doctor->update($this->doctorPayloadFromRequest($request));
+            $old = $doctor->only(self::AUDIT_FIELDS);
+            $staff = $doctor->staff ?? Staff::query()->findOrFail($doctor->staff_id);
+            $doctor = $staffDoctorSync->syncDoctorForStaff($staff, $staffDoctorSync->doctorFieldsFromRequest($request));
+        } else {
+            $request->validate([
+                'staff_id' => ['nullable', 'integer', Rule::exists('staff', 'id')->where(fn ($q) => $q->where('role_type', 'doctor')->where('clinic_id', $doctor->clinic_id))],
+                'full_name' => 'required|string|max:255',
+                'specialty' => 'nullable|string|max:255',
+                'phone' => 'nullable|string|max:20',
+                'email' => ['nullable', 'email', Rule::unique('doctors', 'email')->ignore($doctor->id)->where(fn ($q) => $q->where('clinic_id', $doctor->clinic_id))],
+                'license_number' => ['nullable', 'string', Rule::unique('doctors', 'license_number')->ignore($doctor->id)->where(fn ($q) => $q->where('clinic_id', $doctor->clinic_id))],
+                'room_number' => 'nullable|string|max:50',
+                'status' => 'required|in:active,inactive',
+                'notes' => 'nullable|string',
+            ]);
+
+            $old = $doctor->only(self::AUDIT_FIELDS);
+            $doctor->update($this->doctorPayloadFromRequest($request));
+        }
 
         AuditLogger::log(
             'update',

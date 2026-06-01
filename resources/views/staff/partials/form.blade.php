@@ -3,11 +3,14 @@
     'linkableUsers',
     'action',
     'method' => 'POST',
+    'defaultRoleType' => null,
 ])
 
 @php
     $inputClass = 'block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm focus:border-[#0F4C81] focus:outline-none focus:ring-2 focus:ring-[#0F4C81]/20 dark:border-[#374151] dark:bg-[#111827] dark:text-[#F3F4F6] dark:placeholder:text-slate-500 dark:focus:border-[#3B82F6] dark:focus:ring-[#3B82F6]/25';
     $labelClass = 'mb-1 block text-sm font-medium text-gray-700 dark:text-[#E5E7EB]';
+    $selectedRole = old('role_type', $staff?->role_type ?? $defaultRoleType);
+    $doctor = $staff?->doctor;
 @endphp
 
 <form method="POST" action="{{ $action }}" class="space-y-6" novalidate>
@@ -31,11 +34,11 @@
             <div>
                 <label for="role_type" class="{{ $labelClass }}">{{ __('staff.label_role_type') }}</label>
                 <select name="role_type" id="role_type" required class="@error('role_type') border-red-300 @enderror {{ $inputClass }}">
-                    @if (! $staff)
+                    @if (! $staff && ! $selectedRole)
                         <option value="">{{ __('staff.placeholder_select_role') }}</option>
                     @endif
                     @foreach (\App\Models\Staff::roleTypeOptions() as $value => $label)
-                        <option value="{{ $value }}" @selected(old('role_type', $staff?->role_type) === $value)>{{ $label }}</option>
+                        <option value="{{ $value }}" @selected($selectedRole === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
                 @error('role_type')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
@@ -72,8 +75,48 @@
         </div>
     </div>
 
+    <div id="staff-doctor-fields" class="{{ $selectedRole === 'doctor' ? '' : 'hidden' }} overflow-hidden rounded-xl border border-emerald-200 bg-emerald-50/40 shadow-sm dark:border-emerald-900/50 dark:bg-emerald-950/20">
+        <div class="border-b border-emerald-100 bg-emerald-50/80 px-4 py-4 dark:border-emerald-900/40 dark:bg-emerald-950/30 sm:px-5">
+            <h2 class="m-0 text-base font-bold text-emerald-900 dark:text-emerald-200">{{ __('staff.doctor_section_title') }}</h2>
+            <p class="m-0 mt-1 text-sm text-emerald-800/90 dark:text-emerald-300/90">{{ __('staff.doctor_section_intro') }}</p>
+        </div>
+        <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 sm:p-5">
+            <div>
+                <label for="specialty" class="{{ $labelClass }}">{{ __('doctors.field_specialty') }}</label>
+                <input type="text" name="specialty" id="specialty" value="{{ old('specialty', $doctor?->specialty) }}" class="{{ $inputClass }}" placeholder="{{ __('doctors.specialty_placeholder') }}">
+                @error('specialty')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+            </div>
+            <div>
+                <label for="room_number" class="{{ $labelClass }}">{{ __('doctors.field_room') }}</label>
+                <input type="text" name="room_number" id="room_number" value="{{ old('room_number', $doctor?->room_number) }}" class="{{ $inputClass }}">
+                @error('room_number')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+            </div>
+            <div>
+                <label for="license_number" class="{{ $labelClass }}">{{ __('doctors.field_license') }}</label>
+                <input type="text" name="license_number" id="license_number" value="{{ old('license_number', $doctor?->license_number) }}" class="{{ $inputClass }}">
+                @error('license_number')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+            </div>
+            <div class="sm:col-span-2">
+                <label for="notes" class="{{ $labelClass }}">{{ __('doctors.field_notes') }}</label>
+                <textarea name="notes" id="notes" rows="3" class="{{ $inputClass }}">{{ old('notes', $doctor?->notes) }}</textarea>
+                @error('notes')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+            </div>
+        </div>
+    </div>
+
     <div class="flex flex-wrap justify-end gap-3">
         <a href="{{ route('staff.index') }}" data-spa class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 dark:border-[#4B5563] dark:bg-[#1F2937] dark:text-[#E5E7EB] dark:hover:bg-[#374151]">{{ __('staff.btn_back') }}</a>
         <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-[#0F4C81] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0c3d66] dark:bg-[#3B82F6] dark:hover:bg-blue-600">{{ $staff ? __('staff.btn_update') : __('staff.btn_save') }}</button>
     </div>
 </form>
+
+<script>
+(function () {
+    const roleSelect = document.getElementById('role_type');
+    const doctorBlock = document.getElementById('staff-doctor-fields');
+    if (!roleSelect || !doctorBlock) return;
+    const toggle = () => doctorBlock.classList.toggle('hidden', roleSelect.value !== 'doctor');
+    roleSelect.addEventListener('change', toggle);
+    toggle();
+})();
+</script>
