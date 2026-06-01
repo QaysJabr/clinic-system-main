@@ -36,8 +36,15 @@ Optional env:
 - `SCHEDULING_PUBLIC_BOOKING_RATE_LIMIT=30`
 - `SECURITY_2FA_ENABLED=true` (when ready)
 
-## Still recommended (Phase 2+)
+## Phase 2 (completed in repo)
 
-- Enable 2FA in production; expand API feature tests.
+- API tests: patients, invoices, payments, subscription JSON 403.
+- Public booking security test (cross-clinic doctor rejected).
+- Mobile `env.ts` reads `expo.extra.apiBaseUrl` / `EXPO_PUBLIC_API_URL` (see `mobile/app.config.js`).
+- Operator checklist: `docs/DEPLOY-YOU-DO-THIS-AR.md` (server + `.env` only).
+
+## Still optional
+
+- Enable 2FA on server (`SECURITY_2FA_ENABLED=true`).
 - Horizon package if using queue dashboard in Docker.
-- Practitioner/portable clinical data layer (product decision, not implemented here).
+- HTTPS + domain; Practitioner layer (product decision).

@@ -6,3 +6,8 @@
 cd /var/www/clinic-system-main
 git pull origin main
 bash scripts/fix-all-production.sh
+php artisan config:cache
+php artisan route:cache
+php artisan view:clear
+
+# .env على السيرفر — راجع docs/DEPLOY-YOU-DO-THIS-AR.md
