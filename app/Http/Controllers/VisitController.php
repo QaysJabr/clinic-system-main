@@ -90,8 +90,8 @@ class VisitController extends Controller
     {
         $this->authorize('create', Visit::class);
 
-        $patients = Patient::query()->orderBy('full_name')->get(['id', 'full_name', 'file_number']);
         $user = auth()->user();
+        $patients = $this->patientsForVisitForm($user);
         if ($user && $user->hasRole('doctor') && ! $user->hasRole('admin')) {
             $linked = $user->linkedDoctor();
             $doctors = $linked ? collect([$linked]) : collect();
@@ -219,8 +219,8 @@ class VisitController extends Controller
         $visit = Visit::findOrFail($id);
         $this->authorize('update', $visit);
 
-        $patients = Patient::query()->orderBy('full_name')->get(['id', 'full_name', 'file_number']);
         $user = auth()->user();
+        $patients = $this->patientsForVisitForm($user);
         if ($user && $user->hasRole('doctor') && ! $user->hasRole('admin')) {
             $linked = $user->linkedDoctor();
             $doctors = $linked ? collect([$linked]) : collect();
@@ -466,5 +466,27 @@ class VisitController extends Controller
             'rx_rows.*.duration' => __('visits.attr_rx_duration'),
             'rx_rows.*.notes' => __('visits.attr_rx_notes'),
         ];
+    }
+
+    /**
+     * Doctors should only see their own related patients (via visits or appointments).
+     */
+    private function patientsForVisitForm(?\App\Models\User $user)
+    {
+        $query = Patient::query()->orderBy('full_name');
+
+        if ($user && $user->hasRole('doctor') && ! $user->hasRole('admin')) {
+            $linked = $user->linkedDoctor();
+            if ($linked) {
+                $query->where(function ($q) use ($linked) {
+                    $q->whereHas('visits', fn ($visitQ) => $visitQ->where('doctor_id', $linked->id))
+                        ->orWhereHas('appointments', fn ($apptQ) => $apptQ->where('doctor_id', $linked->id));
+                });
+            } else {
+                $query->whereRaw('1 = 0');
+            }
+        }
+
+        return $query->get(['id', 'full_name', 'file_number']);
     }
 }

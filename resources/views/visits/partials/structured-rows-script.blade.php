@@ -43,4 +43,46 @@
             e.target.closest('.rx-row')?.remove();
         }
     });
+
+    (function initPatientQuickFilter() {
+        const searchInput = document.getElementById('patient_filter');
+        const select = document.getElementById('patient_id');
+        const count = document.getElementById('patient_filter_count');
+        if (!searchInput || !select) return;
+
+        const baseOptions = Array.from(select.options).map(function (opt) {
+            return { value: opt.value, label: opt.textContent || '', selected: opt.selected };
+        });
+
+        function render(query) {
+            const term = (query || '').trim().toLowerCase();
+            const filtered = baseOptions.filter(function (opt) {
+                if (opt.value === '') return true;
+                return term === '' || opt.label.toLowerCase().includes(term);
+            });
+
+            const selectedValue = select.value;
+            select.innerHTML = '';
+            filtered.forEach(function (opt) {
+                const el = document.createElement('option');
+                el.value = opt.value;
+                el.textContent = opt.label;
+                el.selected = (opt.value === selectedValue) || (selectedValue === '' && opt.selected);
+                select.appendChild(el);
+            });
+
+            if (count) {
+                const visible = Math.max(0, filtered.length - 1);
+                count.textContent = visible > 0
+                    ? visible + ' ' + tv('visitJsPatientResults')
+                    : tv('visitJsPatientNoResults');
+            }
+        }
+
+        searchInput.addEventListener('input', function () {
+            render(searchInput.value);
+        });
+
+        render('');
+    })();
 </script>

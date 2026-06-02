@@ -77,6 +77,7 @@ return [
     'field_patient' => 'Patient',
     'field_doctor' => 'Doctor',
     'placeholder_select_patient' => 'Select patient',
+    'placeholder_search_patient_quick' => 'Search by patient name/file number to filter...',
     'placeholder_select_doctor' => 'Select doctor',
     'field_linked_appointment' => 'Linked appointment',
     'placeholder_no_appointment' => 'No appointment',
@@ -182,4 +183,6 @@ return [
     'js_placeholder_frequency' => 'Frequency',
     'js_placeholder_duration' => 'Duration',
     'js_placeholder_rx_notes' => 'Notes',
+    'js_patient_results' => 'result(s)',
+    'js_patient_no_results' => 'No matching results',
 ];

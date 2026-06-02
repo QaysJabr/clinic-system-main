@@ -31,6 +31,8 @@
         'visitJsFrequency' => __('visits.js_placeholder_frequency'),
         'visitJsDuration' => __('visits.js_placeholder_duration'),
         'visitJsRxNotes' => __('visits.js_placeholder_rx_notes'),
+        'visitJsPatientResults' => __('visits.js_patient_results'),
+        'visitJsPatientNoResults' => __('visits.js_patient_no_results'),
 
         'invoiceJsService' => __('invoices.label_service'),
         'invoiceJsItemName' => __('invoices.label_item_name'),

@@ -206,7 +206,10 @@ class PatientController extends Controller
         if ($user && $user->hasRole('doctor') && ! $user->hasRole('admin')) {
             $doc = $user->linkedDoctor();
             if ($doc) {
-                $query->whereHas('visits', fn ($q) => $q->where('doctor_id', $doc->id));
+                $query->where(function ($q) use ($doc) {
+                    $q->whereHas('visits', fn ($visitQ) => $visitQ->where('doctor_id', $doc->id))
+                        ->orWhereHas('appointments', fn ($apptQ) => $apptQ->where('doctor_id', $doc->id));
+                });
             } else {
                 $query->whereRaw('1 = 0');
             }

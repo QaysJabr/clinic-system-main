@@ -77,6 +77,7 @@ return [
     'field_patient' => 'المريض',
     'field_doctor' => 'الطبيب',
     'placeholder_select_patient' => 'اختر المريض',
+    'placeholder_search_patient_quick' => 'ابحث باسم/رقم ملف المريض لتصفية القائمة...',
     'placeholder_select_doctor' => 'اختر الطبيب',
     'field_linked_appointment' => 'الموعد المرتبط',
     'placeholder_no_appointment' => 'بدون موعد',
@@ -182,4 +183,6 @@ return [
     'js_placeholder_frequency' => 'التكرار',
     'js_placeholder_duration' => 'المدة',
     'js_placeholder_rx_notes' => 'ملاحظات',
+    'js_patient_results' => 'نتيجة',
+    'js_patient_no_results' => 'لا توجد نتائج مطابقة',
 ];

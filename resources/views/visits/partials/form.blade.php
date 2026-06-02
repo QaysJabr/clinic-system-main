@@ -31,12 +31,22 @@
         <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 sm:p-5">
             <div>
                 <label for="patient_id" class="{{ $labelClass }}">{{ __('visits.field_patient') }}</label>
+                <input
+                    type="search"
+                    id="patient_filter"
+                    class="{{ $inputClass }} mb-2"
+                    placeholder="{{ __('visits.placeholder_search_patient_quick') }}"
+                    autocomplete="off"
+                >
                 <select name="patient_id" id="patient_id" class="{{ $inputClass }}" required>
                     <option value="">{{ __('visits.placeholder_select_patient') }}</option>
                     @foreach ($patients as $patient)
-                        <option value="{{ $patient->id }}" @selected((string) old('patient_id', $visit?->patient_id ?? request('patient_id')) === (string) $patient->id)>{{ $patient->full_name }}</option>
+                        <option value="{{ $patient->id }}" @selected((string) old('patient_id', $visit?->patient_id ?? request('patient_id')) === (string) $patient->id)>
+                            {{ $patient->full_name }}{{ filled($patient->file_number) ? ' ('.$patient->file_number.')' : '' }}
+                        </option>
                     @endforeach
                 </select>
+                <p id="patient_filter_count" class="mt-1 text-xs text-slate-500 dark:text-slate-400"></p>
                 @error('patient_id')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
             </div>
             <div>
