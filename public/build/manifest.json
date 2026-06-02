@@ -1,14 +1,14 @@
 {
-  "_calendar-Y2R2x90i.js": {
-    "file": "assets/calendar-Y2R2x90i.js",
+  "_calendar-CVz99Isw.js": {
+    "file": "assets/calendar-CVz99Isw.js",
     "name": "calendar"
   },
-  "_chart-DhnqJC1r.js": {
-    "file": "assets/chart-DhnqJC1r.js",
+  "_chart-DrZqFcb7.js": {
+    "file": "assets/chart-DrZqFcb7.js",
     "name": "chart"
   },
-  "_header-notifications-TM2J-K_p.js": {
-    "file": "assets/header-notifications-TM2J-K_p.js",
+  "_header-notifications-JjJl--4B.js": {
+    "file": "assets/header-notifications-JjJl--4B.js",
     "name": "header-notifications",
     "dynamicImports": [
       "resources/js/clinic-dashboard.js",
@@ -16,15 +16,15 @@
       "resources/js/appointment-slots.js"
     ]
   },
-  "_rolldown-runtime-DTavXwLA.js": {
-    "file": "assets/rolldown-runtime-DTavXwLA.js",
+  "_rolldown-runtime-CUGM0VWp.js": {
+    "file": "assets/rolldown-runtime-CUGM0VWp.js",
     "name": "rolldown-runtime"
   },
-  "_vendor-DYrHZSRw.js": {
-    "file": "assets/vendor-DYrHZSRw.js",
+  "_vendor-Do1ezphx.js": {
+    "file": "assets/vendor-Do1ezphx.js",
     "name": "vendor",
     "imports": [
-      "_rolldown-runtime-DTavXwLA.js"
+      "_rolldown-runtime-CUGM0VWp.js"
     ]
   },
   "node_modules/@fontsource/cairo/files/cairo-arabic-400-normal.woff": {
@@ -148,7 +148,7 @@
     "src": "node_modules/@fontsource/cairo/files/cairo-latin-ext-800-normal.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-gIKYufGI.css",
+    "file": "assets/app-LCm6osgL.css",
     "name": "app",
     "names": [
       "app.css"
@@ -204,13 +204,13 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DxufKNB6.js",
+    "file": "assets/app-CCvrtNIZ.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_header-notifications-TM2J-K_p.js",
-      "_vendor-DYrHZSRw.js",
+      "_header-notifications-JjJl--4B.js",
+      "_vendor-Do1ezphx.js",
       "resources/js/saas-billing.js",
       "resources/js/saas-billing.js"
     ],
@@ -225,42 +225,48 @@
     "isEntry": true
   },
   "resources/js/appointments-calendar.js": {
-    "file": "assets/appointments-calendar-C1JkRG4g.js",
+    "file": "assets/appointments-calendar-DN9mpLV-.js",
     "name": "appointments-calendar",
     "src": "resources/js/appointments-calendar.js",
     "isEntry": true,
     "imports": [
-      "_calendar-Y2R2x90i.js"
+      "_calendar-CVz99Isw.js"
     ]
   },
   "resources/js/clinic-dashboard.js": {
-    "file": "assets/clinic-dashboard-BgnOZjsX.js",
+    "file": "assets/clinic-dashboard-Dw9KSLzO.js",
     "name": "clinic-dashboard",
     "src": "resources/js/clinic-dashboard.js",
     "isEntry": true,
     "imports": [
-      "_chart-DhnqJC1r.js"
+      "_chart-DrZqFcb7.js"
     ]
   },
+  "resources/js/doctor-onboarding.js": {
+    "file": "assets/doctor-onboarding-B2sj5ZC6.js",
+    "name": "doctor-onboarding",
+    "src": "resources/js/doctor-onboarding.js",
+    "isEntry": true
+  },
   "resources/js/landing.js": {
-    "file": "assets/landing-BrVvZOlh.js",
+    "file": "assets/landing-D-NwNJ9v.js",
     "name": "landing",
     "src": "resources/js/landing.js",
     "isEntry": true
   },
   "resources/js/platform.js": {
-    "file": "assets/platform-Cfcbq1lD.js",
+    "file": "assets/platform-ChXwCwfY.js",
     "name": "platform",
     "src": "resources/js/platform.js",
     "isEntry": true,
     "imports": [
-      "_header-notifications-TM2J-K_p.js",
+      "_header-notifications-JjJl--4B.js",
       "resources/js/admin-plans.js",
       "resources/js/admin-plans.js"
     ]
   },
   "resources/js/public-booking.js": {
-    "file": "assets/public-booking-GWXmIjlC.js",
+    "file": "assets/public-booking-DX8bHfq_.js",
     "name": "public-booking",
     "src": "resources/js/public-booking.js",
     "isEntry": true
@@ -269,6 +275,18 @@
     "file": "assets/saas-billing-CxDNVa4-.js",
     "name": "saas-billing",
     "src": "resources/js/saas-billing.js",
+    "isEntry": true
+  },
+  "resources/js/staff-doctor-fields.js": {
+    "file": "assets/staff-doctor-fields-CO62gre_.js",
+    "name": "staff-doctor-fields",
+    "src": "resources/js/staff-doctor-fields.js",
+    "isEntry": true
+  },
+  "resources/js/user-create.js": {
+    "file": "assets/user-create-By-o2DF8.js",
+    "name": "user-create",
+    "src": "resources/js/user-create.js",
     "isEntry": true
   }
 }

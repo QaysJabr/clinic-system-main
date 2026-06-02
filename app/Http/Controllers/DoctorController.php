@@ -10,6 +10,7 @@ use App\Support\DoctorFinancialSummary;
 use App\Support\Queries\DoctorListQuery;
 use App\Support\TenantValidation;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Validation\Rule;
@@ -58,22 +59,9 @@ class DoctorController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create(Request $request): RedirectResponse
     {
-        $linkedStaff = Staff::query()
-            ->where('role_type', 'doctor')
-            ->whereDoesntHave('doctor')
-            ->orderBy('full_name')
-            ->get(['id', 'full_name', 'phone', 'email', 'status']);
-
-        $pageTitle = __('doctors.page_title_create');
-        $linkOnly = true;
-
-        if ($request->ajax()) {
-            return view('doctors.partials.create', compact('linkedStaff', 'pageTitle', 'linkOnly'));
-        }
-
-        return view('doctors.create', compact('linkedStaff', 'pageTitle', 'linkOnly'));
+        return redirect()->route('doctors.onboarding.create');
     }
 
     /**

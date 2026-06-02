@@ -35,6 +35,17 @@
                 </li>
             @endif
         @endcan
+        @can('manage doctors')
+            @if ($active === 'list')
+                <li>
+                    <a
+                        href="{{ route('doctors.onboarding.create') }}"
+                        data-no-spa
+                        class="inline-flex items-center rounded-lg px-4 py-2.5 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50 dark:text-emerald-300 dark:hover:bg-emerald-950/30"
+                    >{{ __('staff.add_doctor_btn') }}</a>
+                </li>
+            @endif
+        @endcan
         @can('manage staff payroll')
             @if ($active === 'compensation')
                 <li>

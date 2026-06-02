@@ -12,7 +12,7 @@
             <h1 class="m-0 text-[28px] font-bold text-[#0F4C81] dark:text-[#93C5FD]">{{ __('doctors.heading_manage') }}</h1>
             <p class="m-0 mt-2 text-sm text-gray-600 dark:text-[#9CA3AF]">{{ __('doctors.subtitle_index') }}</p>
         </div>
-        <a href="{{ route('doctors.create') }}" data-no-spa class="inline-flex shrink-0 items-center justify-center rounded-lg bg-[#0F4C81] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0c3d66] dark:bg-[#3B82F6] dark:hover:bg-blue-600">{{ __('doctors.add_doctor') }}</a>
+        <a href="{{ route('doctors.onboarding.create') }}" data-no-spa class="inline-flex shrink-0 items-center justify-center rounded-lg bg-[#0F4C81] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0c3d66] dark:bg-[#3B82F6] dark:hover:bg-blue-600">{{ __('doctors.add_doctor') }}</a>
     </div>
 
     <div class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -131,7 +131,7 @@
                                     <p class="m-0 text-base font-semibold text-gray-700 dark:text-gray-200">{{ __('doctors.empty_title') }}</p>
                                     <p class="m-0 mt-2 text-sm text-gray-500 dark:text-gray-400">{{ $hasFilters ? __('doctors.empty_filtered') : __('doctors.empty_hint') }}</p>
                                     @if (! $hasFilters)
-                                        <a href="{{ route('doctors.create') }}" data-no-spa class="mt-4 inline-flex items-center justify-center rounded-lg bg-[#0F4C81] px-4 py-2.5 text-sm font-semibold text-white shadow-sm dark:bg-[#3B82F6]">{{ __('doctors.add_doctor') }}</a>
+                                        <a href="{{ route('doctors.onboarding.create') }}" data-no-spa class="mt-4 inline-flex items-center justify-center rounded-lg bg-[#0F4C81] px-4 py-2.5 text-sm font-semibold text-white shadow-sm dark:bg-[#3B82F6]">{{ __('doctors.add_doctor') }}</a>
                                     @endif
                                 </td>
                             </tr>

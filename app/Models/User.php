@@ -160,16 +160,47 @@ class User extends Authenticatable
             ? $this->staffRecord
             : Staff::query()->withoutGlobalScopes()->where('user_id', $this->id)->first();
 
-        if (! $staff) {
+        if ($staff) {
+            return Doctor::query()
+                ->withoutGlobalScopes()
+                ->where('staff_id', $staff->id)
+                ->when($this->clinic_id !== null, fn ($q) => $q->where('clinic_id', $this->clinic_id))
+                ->first();
+        }
+
+        return $this->resolveDoctorByIdentityFallback();
+    }
+
+    /**
+     * عند غياب staff↔user: مطابقة بريد أو اسم واحد فقط داخل العيادة (إعداد شائع بعد إنشاء طبيب بدون موظف).
+     */
+    private function resolveDoctorByIdentityFallback(): ?Doctor
+    {
+        if ($this->clinic_id === null) {
             return null;
         }
 
-        // ربط الموظف بالطبيب: بدون TenantScope حتى لا يُخفى السجل خارج جلسة مصادقة أو بسبب تعارض نطاق مؤقت.
-        return Doctor::query()
-            ->withoutGlobalScopes()
-            ->where('staff_id', $staff->id)
-            ->when($this->clinic_id !== null, fn ($q) => $q->where('clinic_id', $this->clinic_id))
-            ->first();
+        $base = Doctor::query()->withoutGlobalScopes()->where('clinic_id', $this->clinic_id);
+
+        if (filled($this->email)) {
+            $byEmail = (clone $base)
+                ->whereRaw('LOWER(TRIM(email)) = ?', [mb_strtolower(trim((string) $this->email))])
+                ->get();
+            if ($byEmail->count() === 1) {
+                return $byEmail->first();
+            }
+        }
+
+        if (filled($this->name)) {
+            $byName = (clone $base)
+                ->where('full_name', trim((string) $this->name))
+                ->get();
+            if ($byName->count() === 1) {
+                return $byName->first();
+            }
+        }
+
+        return null;
     }
 
     /**

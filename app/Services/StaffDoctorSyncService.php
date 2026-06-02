@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Doctor;
 use App\Models\Staff;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 final class StaffDoctorSyncService
@@ -21,7 +22,7 @@ final class StaffDoctorSyncService
      */
     public function doctorFieldsFromRequest(Request $request): array
     {
-        return $request->only(self::doctorFieldKeys());
+        return $this->normalizeDoctorFields($request->only(self::doctorFieldKeys()));
     }
 
     /**
@@ -29,14 +30,15 @@ final class StaffDoctorSyncService
      */
     public function syncDoctorForStaff(Staff $staff, array $doctorFields): Doctor
     {
-        $doctor = Doctor::query()->firstOrNew(['staff_id' => $staff->id]);
+        $doctor = $this->resolveDoctorForStaff($staff);
+        $doctorFields = $this->normalizeDoctorFields($doctorFields);
 
         $doctor->fill([
             'clinic_id' => $staff->clinic_id,
             'staff_id' => $staff->id,
             'full_name' => $staff->full_name,
-            'phone' => $staff->phone,
-            'email' => $staff->email,
+            'phone' => filled($staff->phone) ? $staff->phone : null,
+            'email' => filled($staff->email) ? $staff->email : null,
             'status' => $staff->status,
             'specialty' => $doctorFields['specialty'] ?? null,
             'license_number' => $doctorFields['license_number'] ?? null,
@@ -46,6 +48,8 @@ final class StaffDoctorSyncService
 
         $doctor->save();
 
+        $this->ensureDoctorUserRole($staff);
+
         return $doctor;
     }
 
@@ -54,6 +58,67 @@ final class StaffDoctorSyncService
      */
     public function removeDoctorForStaff(Staff $staff): void
     {
-        Doctor::query()->where('staff_id', $staff->id)->delete();
+        Doctor::query()
+            ->withoutGlobalScopes()
+            ->where('staff_id', $staff->id)
+            ->delete();
+    }
+
+    /**
+     * Ensure linked user has Spatie role `doctor` when staff is a doctor with login.
+     */
+    public function ensureDoctorUserRole(Staff $staff): void
+    {
+        if ($staff->role_type !== 'doctor' || ! $staff->user_id) {
+            return;
+        }
+
+        $user = User::query()->withoutGlobalScopes()->find($staff->user_id);
+
+        if ($user !== null && ! $user->hasRole('doctor')) {
+            $user->assignRole('doctor');
+        }
+    }
+
+    /**
+     * Find existing doctor row for staff (tenant-safe) or prepare a new model.
+     */
+    public function resolveDoctorForStaff(Staff $staff): Doctor
+    {
+        $query = Doctor::query()
+            ->withoutGlobalScopes()
+            ->where('staff_id', $staff->id);
+
+        if ($staff->clinic_id !== null) {
+            $query->where('clinic_id', $staff->clinic_id);
+        }
+
+        $existing = $query->first();
+
+        if ($existing !== null) {
+            return $existing;
+        }
+
+        $doctor = new Doctor;
+        $doctor->staff_id = $staff->id;
+        $doctor->clinic_id = $staff->clinic_id;
+
+        return $doctor;
+    }
+
+    /**
+     * @param  array<string, mixed>  $fields
+     * @return array<string, mixed>
+     */
+    private function normalizeDoctorFields(array $fields): array
+    {
+        $normalized = [];
+
+        foreach (self::doctorFieldKeys() as $key) {
+            $value = $fields[$key] ?? null;
+            $normalized[$key] = filled($value) ? $value : null;
+        }
+
+        return $normalized;
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\ClinicalDashboardController;
 use App\Http\Controllers\ClinicSettingsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\DoctorOnboardingController;
 use App\Http\Controllers\DoctorEarningController;
 use App\Http\Controllers\DoctorReportController;
 use App\Http\Controllers\DoctorScheduleController;
@@ -223,6 +224,8 @@ Route::middleware(['auth', 'verified', 'ensure.user.has.clinic', 'prevent.platfo
     Route::get('lookup/patient/{token}', PatientLookupController::class)->name('patients.lookup');
 
     Route::middleware('permission:'.ClinicPermissions::MANAGE_DOCTORS)->group(function () {
+        Route::get('doctors/onboarding/create', [DoctorOnboardingController::class, 'create'])->name('doctors.onboarding.create');
+        Route::post('doctors/onboarding', [DoctorOnboardingController::class, 'store'])->name('doctors.onboarding.store');
         Route::resource('doctors', DoctorController::class);
         Route::get('doctors/{doctor}/schedules', [DoctorScheduleController::class, 'index'])->name('doctors.schedules.index');
         Route::post('doctors/{doctor}/schedules', [DoctorScheduleController::class, 'store'])->name('doctors.schedules.store');

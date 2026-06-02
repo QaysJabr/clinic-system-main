@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\LenientBackedEnumCast;
 use App\Enums\PaymentCycle;
 use App\Enums\StaffCompensationModel;
 use App\Models\Concerns\BelongsToClinic;
@@ -33,8 +34,8 @@ class StaffCompensationProfile extends Model
     protected function casts(): array
     {
         return [
-            'compensation_type' => StaffCompensationModel::class,
-            'payment_cycle' => PaymentCycle::class,
+            'compensation_type' => LenientBackedEnumCast::class.':'.StaffCompensationModel::class.',fixed',
+            'payment_cycle' => LenientBackedEnumCast::class.':'.PaymentCycle::class.',monthly',
             'base_salary' => 'decimal:2',
             'percentage_rate' => 'decimal:2',
             'daily_wage' => 'decimal:2',
@@ -67,13 +68,19 @@ class StaffCompensationProfile extends Model
      */
     public function compactBadge(): string
     {
-        $type = match ($this->compensation_type) {
-            StaffCompensationModel::Percentage => __('staff.comp_percentage'),
-            StaffCompensationModel::Daily => __('staff.comp_daily'),
-            StaffCompensationModel::Fixed => __('staff.comp_fixed'),
-        };
+        $type = $this->compensation_type;
+        if (! $type instanceof StaffCompensationModel) {
+            return __('common.em_dash');
+        }
 
-        return $type.' · '.$this->payment_cycle->label();
+        $typeLabel = $type->label();
+        $cycle = $this->payment_cycle;
+
+        if (! $cycle instanceof PaymentCycle) {
+            return $typeLabel;
+        }
+
+        return $typeLabel.' · '.$cycle->label();
     }
 
     public function compactBadgeAr(): string
@@ -84,9 +91,14 @@ class StaffCompensationProfile extends Model
     public function summaryLabel(): string
     {
         $dash = __('common.em_dash');
-        $cycle = $this->payment_cycle->label();
+        $cycle = $this->payment_cycle?->label() ?? $dash;
+        $compensationType = $this->compensation_type;
 
-        return match ($this->compensation_type) {
+        if (! $compensationType instanceof StaffCompensationModel) {
+            return $dash;
+        }
+
+        return match ($compensationType) {
             StaffCompensationModel::Fixed => __('staff.summary_fixed', [
                 'amount' => $this->base_salary !== null ? (string) $this->base_salary : $dash,
                 'cycle' => $cycle,
@@ -100,6 +112,7 @@ class StaffCompensationProfile extends Model
                 'amount' => $this->daily_wage !== null ? (string) $this->daily_wage : $dash,
                 'cycle' => $cycle,
             ]),
+            default => $dash,
         };
     }
 

@@ -4,14 +4,32 @@
     'action',
     'method' => 'POST',
     'defaultRoleType' => null,
+    'includeDoctorRole' => true,
 ])
 
 @php
     $inputClass = 'block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm focus:border-[#0F4C81] focus:outline-none focus:ring-2 focus:ring-[#0F4C81]/20 dark:border-[#374151] dark:bg-[#111827] dark:text-[#F3F4F6] dark:placeholder:text-slate-500 dark:focus:border-[#3B82F6] dark:focus:ring-[#3B82F6]/25';
     $labelClass = 'mb-1 block text-sm font-medium text-gray-700 dark:text-[#E5E7EB]';
     $selectedRole = old('role_type', $staff?->role_type ?? $defaultRoleType);
-    $doctor = $staff?->doctor;
+    $doctor = $staff?->relationLoaded('doctor') ? $staff->doctor : $staff?->doctor;
+    $roleOptions = \App\Models\Staff::roleTypeOptions($includeDoctorRole);
 @endphp
+
+@if (! $includeDoctorRole)
+    <div class="mb-6 rounded-xl border border-sky-200 bg-sky-50/90 px-4 py-3 text-sm text-sky-900 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-100" role="status">
+        <p class="m-0 font-semibold">{{ __('staff.doctor_add_via_onboarding_title') }}</p>
+        <p class="m-0 mt-1">{{ __('staff.doctor_add_via_onboarding_body') }}</p>
+        <a href="{{ route('doctors.onboarding.create') }}" data-no-spa class="mt-2 inline-flex font-bold text-[#0F4C81] no-underline hover:underline dark:text-[#93C5FD]">{{ __('staff.doctor_add_via_onboarding_link') }} →</a>
+    </div>
+@endif
+
+@if ($staff?->role_type === 'doctor' && ! $staff->user_id)
+    <div class="mb-6 rounded-xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100" role="status">
+        <p class="m-0 font-semibold">{{ __('staff.doctor_no_login_title') }}</p>
+        <p class="m-0 mt-1">{{ __('staff.doctor_no_login_body') }}</p>
+        <a href="{{ route('doctors.onboarding.create', ['account_mode' => 'existing']) }}" data-no-spa class="mt-2 inline-flex font-bold text-amber-900 no-underline hover:underline dark:text-amber-200">{{ __('staff.doctor_no_login_link') }} →</a>
+    </div>
+@endif
 
 <form method="POST" action="{{ $action }}" class="space-y-6" novalidate>
     @csrf
@@ -37,7 +55,7 @@
                     @if (! $staff && ! $selectedRole)
                         <option value="">{{ __('staff.placeholder_select_role') }}</option>
                     @endif
-                    @foreach (\App\Models\Staff::roleTypeOptions() as $value => $label)
+                    @foreach ($roleOptions as $value => $label)
                         <option value="{{ $value }}" @selected($selectedRole === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
@@ -110,13 +128,6 @@
     </div>
 </form>
 
-<script>
-(function () {
-    const roleSelect = document.getElementById('role_type');
-    const doctorBlock = document.getElementById('staff-doctor-fields');
-    if (!roleSelect || !doctorBlock) return;
-    const toggle = () => doctorBlock.classList.toggle('hidden', roleSelect.value !== 'doctor');
-    roleSelect.addEventListener('change', toggle);
-    toggle();
-})();
-</script>
+@push('scripts')
+    @vite('resources/js/staff-doctor-fields.js')
+@endpush

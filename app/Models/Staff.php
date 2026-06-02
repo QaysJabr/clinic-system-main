@@ -42,9 +42,9 @@ class Staff extends Model
     /**
      * @return array<string, string>
      */
-    public static function roleTypeOptions(): array
+    public static function roleTypeOptions(bool $includeDoctor = true): array
     {
-        return [
+        $options = [
             'doctor' => __('payroll.role_doctor'),
             'receptionist' => __('payroll.role_receptionist'),
             'accountant' => __('payroll.role_accountant'),
@@ -54,6 +54,12 @@ class Staff extends Model
             'assistant' => __('payroll.role_assistant'),
             'other' => __('payroll.role_other'),
         ];
+
+        if (! $includeDoctor) {
+            unset($options['doctor']);
+        }
+
+        return $options;
     }
 
     /**

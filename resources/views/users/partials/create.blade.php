@@ -10,6 +10,7 @@
             <a href="{{ route('users.index') }}" data-spa class="mb-3 inline-flex text-sm font-semibold text-[#0F4C81] hover:underline dark:text-[#93C5FD]">{{ __('settings.users_back_to_list') }}</a>
             <h1 class="m-0 text-[28px] font-bold text-[#0F4C81] dark:text-[#93C5FD]">{{ __('settings.users_create_heading') }}</h1>
             <p class="m-0 mt-2 text-sm text-gray-600 dark:text-[#9CA3AF]">{{ __('settings.users_create_intro') }}</p>
+            <p class="m-0 mt-1 text-xs text-slate-500 dark:text-slate-400">{{ __('settings.users_create_intro_staff') }}</p>
         </div>
     </div>
 
@@ -34,5 +35,7 @@
     @include('users.partials.form', [
         'action' => route('users.store'),
         'roles' => $roles,
+        'linkableStaff' => $linkableStaff ?? collect(),
+        'defaultMode' => $defaultMode ?? 'from_staff',
     ])
 </div>

@@ -54,6 +54,7 @@
     @include('staff.partials.form', [
         'staff' => $staff,
         'linkableUsers' => $linkableUsers,
+        'includeDoctorRole' => $includeDoctorRole ?? true,
         'action' => route('staff.update', $staff),
         'method' => 'PUT',
     ])

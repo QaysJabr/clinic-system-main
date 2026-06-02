@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Clinic;
+use App\Models\Staff;
 use App\Models\User;
+use App\Services\UserStaffLinkService;
 use App\Support\AuditLogger;
 use App\Support\Queries\UserListQuery;
 use Illuminate\Database\Eloquent\Collection;
@@ -17,6 +19,10 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    public function __construct(
+        private readonly UserStaffLinkService $userStaffLink,
+    ) {}
+
     private const CLINIC_ASSIGNABLE_ROLES = [
         'admin',
         'clinic_owner',
@@ -61,19 +67,90 @@ class UserController extends Controller
     public function create(Request $request): View
     {
         $roles = $this->assignableWebRoles();
-
+        $linkableStaff = $this->linkableStaffWithoutUser();
         $pageTitle = __('settings.users_create_heading');
+        $defaultMode = $linkableStaff->isNotEmpty() ? 'from_staff' : 'new';
 
         if ($request->ajax()) {
-            return view('users.partials.create', compact('roles', 'pageTitle'));
+            return view('users.partials.create', compact('roles', 'pageTitle', 'linkableStaff', 'defaultMode'));
         }
 
-        return view('users.create', compact('roles', 'pageTitle'));
+        return view('users.create', compact('roles', 'pageTitle', 'linkableStaff', 'defaultMode'));
     }
 
     public function store(Request $request): RedirectResponse
     {
+        $mode = $request->input('account_mode', 'from_staff');
+
+        if ($mode === 'from_staff') {
+            return $this->storeFromStaff($request);
+        }
+
+        if ($request->input('role') === 'doctor') {
+            return redirect()
+                ->route('doctors.onboarding.create')
+                ->with('info', __('settings.users_doctor_use_onboarding'));
+        }
+
+        return $this->storeNewAccount($request);
+    }
+
+    private function storeFromStaff(Request $request): RedirectResponse
+    {
+        $clinicId = Auth::user()?->clinic_id ?? config('tenancy.default_clinic_id');
+
+        $staffExists = Rule::exists('staff', 'id')->whereNull('user_id');
+        if (! Auth::user()?->hasRole('super_admin') && $clinicId) {
+            $staffExists = Rule::exists('staff', 'id')
+                ->where(fn ($q) => $q->where('clinic_id', $clinicId)->whereNull('user_id'));
+        }
+
         $validated = $request->validate([
+            'account_mode' => ['required', Rule::in(['from_staff'])],
+            'staff_id' => ['required', 'integer', $staffExists],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => [
+                'nullable',
+                'string',
+                Rule::exists('roles', 'name')->where('guard_name', 'web'),
+                Rule::in($this->assignableRoleNames()),
+            ],
+        ]);
+
+        $this->assertCanAddUser();
+
+        $staff = Staff::query()->whereKey($validated['staff_id'])->firstOrFail();
+        $role = $validated['role'] ?? UserStaffLinkService::roleForStaff($staff);
+
+        $user = $this->userStaffLink->createUserForStaff(
+            $staff,
+            $validated['password'],
+            $role
+        );
+
+        $user->load('roles');
+
+        AuditLogger::log(
+            'create',
+            'users',
+            $user->id,
+            __('settings.audit_user_create_from_staff', [
+                'email' => $user->email,
+                'staff' => $staff->full_name,
+            ]),
+            null,
+            $this->userAuditSnapshot($user)
+        );
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', __('settings.users_flash_linked_staff', ['name' => $staff->full_name]));
+    }
+
+    private function storeNewAccount(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'account_mode' => ['required', Rule::in(['new'])],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -85,13 +162,7 @@ class UserController extends Controller
             ],
         ]);
 
-        $clinicId = Auth::user()?->clinic_id ?? config('tenancy.default_clinic_id');
-        $clinic = $clinicId ? Clinic::query()->with('plan')->find($clinicId) : null;
-        if ($clinic && ! Auth::user()?->hasRole('super_admin') && ! $clinic->canAddUser()) {
-            throw ValidationException::withMessages([
-                'email' => __('settings.users_error_plan_limit'),
-            ]);
-        }
+        $this->assertCanAddUser();
 
         $user = User::query()->create([
             'name' => $validated['name'],
@@ -113,6 +184,34 @@ class UserController extends Controller
         );
 
         return redirect()->route('users.index')->with('success', __('settings.users_flash_created'));
+    }
+
+    private function assertCanAddUser(): void
+    {
+        $clinicId = Auth::user()?->clinic_id ?? config('tenancy.default_clinic_id');
+        $clinic = $clinicId ? Clinic::query()->with('plan')->find($clinicId) : null;
+
+        if ($clinic && ! Auth::user()?->hasRole('super_admin') && ! $clinic->canAddUser()) {
+            throw ValidationException::withMessages([
+                'email' => __('settings.users_error_plan_limit'),
+            ]);
+        }
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, Staff>
+     */
+    private function linkableStaffWithoutUser()
+    {
+        $query = Staff::query()
+            ->whereNull('user_id')
+            ->orderBy('full_name');
+
+        if (! Auth::user()?->hasRole('super_admin') && Auth::user()?->clinic_id) {
+            $query->where('clinic_id', Auth::user()->clinic_id);
+        }
+
+        return $query->get(['id', 'full_name', 'email', 'phone', 'role_type']);
     }
 
     public function edit(Request $request, User $user): View
@@ -200,6 +299,16 @@ class UserController extends Controller
             $old,
             $newSnapshot
         );
+
+        if ($validated['role'] === 'doctor' && ! $user->staffRecord()->exists()) {
+            return redirect()
+                ->route('doctors.onboarding.create', [
+                    'account_mode' => 'existing',
+                    'user_id' => $user->id,
+                    'name' => $user->name,
+                ])
+                ->with('info', __('doctor_onboarding.complete_profile'));
+        }
 
         return redirect()->route('users.index')->with('success', __('settings.users_flash_updated'));
     }

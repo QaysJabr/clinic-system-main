@@ -160,7 +160,7 @@
         ];
     })->values();
 @endphp
-<script>
+<script @if(! empty($cspNonce ?? null)) nonce="{{ $cspNonce }}" @endif>
 (function () {
     const staffData = @json($staffPickerData);
     const select = document.getElementById('staff_id');

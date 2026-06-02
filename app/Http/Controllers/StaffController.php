@@ -52,8 +52,12 @@ class StaffController extends Controller
         return view('staff.index', compact('staffMembers', 'pageTitle', 'staffStats'));
     }
 
-    public function create(Request $request): View
+    public function create(Request $request): View|RedirectResponse
     {
+        if ($request->query('role') === 'doctor') {
+            return redirect()->route('doctors.onboarding.create');
+        }
+
         $linkableUsersQuery = User::query()->orderBy('name');
         if (! Auth::user()?->hasRole('super_admin')) {
             $linkableUsersQuery->where('clinic_id', Auth::user()?->clinic_id);
@@ -61,28 +65,27 @@ class StaffController extends Controller
         $linkableUsers = $linkableUsersQuery->get(['id', 'name', 'email']);
 
         $pageTitle = __('staff.page_create');
-        $defaultRoleType = $request->query('role') === 'doctor' ? 'doctor' : null;
+        $includeDoctorRole = false;
 
         if ($request->ajax()) {
-            return view('staff.partials.create', compact('linkableUsers', 'pageTitle', 'defaultRoleType'));
+            return view('staff.partials.create', compact('linkableUsers', 'pageTitle', 'includeDoctorRole'));
         }
 
-        return view('staff.create', compact('linkableUsers', 'pageTitle', 'defaultRoleType'));
+        return view('staff.create', compact('linkableUsers', 'pageTitle', 'includeDoctorRole'));
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $validated = $this->validateStaff($request);
+        if ($request->input('role_type') === 'doctor') {
+            return redirect()
+                ->route('doctors.onboarding.create')
+                ->with('info', __('staff.doctor_use_onboarding'));
+        }
+
+        $validated = $this->normalizeStaffPayload($this->validateStaff($request));
         $validated['user_id'] = $request->filled('user_id') ? $request->integer('user_id') : null;
 
-        $staff = Staff::query()->create($validated);
-
-        if ($staff->role_type === 'doctor') {
-            $this->staffDoctorSync->syncDoctorForStaff($staff, $this->staffDoctorSync->doctorFieldsFromRequest($request));
-
-            return redirect()->route('staff.index')
-                ->with('success', __('staff.flash_created_doctor'));
-        }
+        Staff::query()->create($validated);
 
         return redirect()->route('staff.index')
             ->with('success', __('staff.flash_created'));
@@ -108,21 +111,28 @@ class StaffController extends Controller
             $linkableUsersQuery->where('clinic_id', Auth::user()?->clinic_id);
         }
 
-        $linkableUsers = $linkableUsersQuery->get(['id', 'name', 'email']);
-        $staff->load(['compensationProfile', 'doctor']);
-
-        $pageTitle = __('staff.page_edit');
-
-        if ($request->ajax()) {
-            return view('staff.partials.edit', compact('staff', 'linkableUsers', 'pageTitle'));
+        if ($staff->role_type === 'doctor') {
+            $linkableUsersQuery->role('doctor');
         }
 
-        return view('staff.edit', compact('staff', 'linkableUsers', 'pageTitle'));
+        $linkableUsers = $linkableUsersQuery->get(['id', 'name', 'email']);
+        $staff->load(['compensationProfile']);
+        $resolvedDoctor = $this->staffDoctorSync->resolveDoctorForStaff($staff);
+        $staff->setRelation('doctor', $resolvedDoctor->exists ? $resolvedDoctor : null);
+
+        $pageTitle = __('staff.page_edit');
+        $includeDoctorRole = true;
+
+        if ($request->ajax()) {
+            return view('staff.partials.edit', compact('staff', 'linkableUsers', 'pageTitle', 'includeDoctorRole'));
+        }
+
+        return view('staff.edit', compact('staff', 'linkableUsers', 'pageTitle', 'includeDoctorRole'));
     }
 
     public function update(Request $request, Staff $staff): RedirectResponse
     {
-        $validated = $this->validateStaff($request, $staff);
+        $validated = $this->normalizeStaffPayload($this->validateStaff($request, $staff));
         $validated['user_id'] = $request->filled('user_id') ? $request->integer('user_id') : null;
 
         $wasDoctor = $staff->role_type === 'doctor';
@@ -130,7 +140,10 @@ class StaffController extends Controller
         $staff->refresh();
 
         if ($staff->role_type === 'doctor') {
-            $this->staffDoctorSync->syncDoctorForStaff($staff, $this->staffDoctorSync->doctorFieldsFromRequest($request));
+            $this->staffDoctorSync->syncDoctorForStaff(
+                $staff,
+                $this->staffDoctorSync->doctorFieldsFromRequest($request)
+            );
 
             return redirect()->route('staff.index')
                 ->with('success', $wasDoctor ? __('staff.flash_updated') : __('staff.flash_updated_doctor_linked'));
@@ -196,21 +209,37 @@ class StaffController extends Controller
 
         if ($request->input('role_type') === 'doctor') {
             $ignoreDoctorId = $staff
-                ? Doctor::query()->where('staff_id', $staff->id)->value('id')
+                ? Doctor::query()->withoutGlobalScopes()->where('staff_id', $staff->id)->value('id')
                 : null;
 
             $rules['specialty'] = ['nullable', 'string', 'max:255'];
-            $rules['license_number'] = [
-                'nullable',
-                'string',
-                Rule::unique('doctors', 'license_number')
-                    ->where(fn ($q) => $q->where('clinic_id', $clinicId))
-                    ->ignore($ignoreDoctorId),
-            ];
             $rules['room_number'] = ['nullable', 'string', 'max:50'];
-            $rules['notes'] = ['nullable', 'string'];
+            $rules['notes'] = ['nullable', 'string', 'max:5000'];
+
+            $licenseRules = ['nullable', 'string', 'max:255'];
+            if (filled($request->input('license_number'))) {
+                $licenseRules[] = Rule::unique('doctors', 'license_number')
+                    ->where(fn ($q) => $q->where('clinic_id', $clinicId))
+                    ->ignore($ignoreDoctorId);
+            }
+            $rules['license_number'] = $licenseRules;
         }
 
         return $request->validate($rules);
+    }
+
+    /**
+     * @param  array<string, mixed>  $validated
+     * @return array<string, mixed>
+     */
+    private function normalizeStaffPayload(array $validated): array
+    {
+        foreach (['phone', 'email'] as $key) {
+            if (array_key_exists($key, $validated) && ! filled($validated[$key])) {
+                $validated[$key] = null;
+            }
+        }
+
+        return $validated;
     }
 }

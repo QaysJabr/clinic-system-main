@@ -1,0 +1,1 @@
+function e(){let e=document.getElementById(`role_type`),t=document.getElementById(`staff-doctor-fields`);if(!e||!t)return;let n=()=>t.classList.toggle(`hidden`,e.value!==`doctor`);e.addEventListener(`change`,n),n()}document.readyState===`loading`?document.addEventListener(`DOMContentLoaded`,e):e();
